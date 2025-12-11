@@ -20,7 +20,7 @@ class UserManager implements UserProviderInterface
     public function __construct(
         protected string $class,
         protected ObjectManager $om,
-        protected PasswordHasherFactoryInterface $encoderFactory,
+        protected PasswordHasherFactoryInterface $passwordHasherFactory,
         private SaverInterface $saver
     ) {
     }
@@ -58,7 +58,7 @@ class UserManager implements UserProviderInterface
     public function updatePassword(UserInterface $user)
     {
         if (0 !== strlen($password = $user->getPlainPassword())) {
-            $encoder = $this->getEncoder($user);
+            $encoder = $this->passwordHasher($user);
             $user->setPassword($encoder->hash($password, $user->getSalt()));
         }
     }
@@ -232,9 +232,9 @@ class UserManager implements UserProviderInterface
         return $class === $this->getClass();
     }
 
-    protected function getEncoder(UserInterface $user)
+    protected function passwordHasher(UserInterface $user)
     {
-        return $this->encoderFactory->getPasswordHasher($user);
+        return $this->passwordHasherFactory->getPasswordHasher($user);
     }
 
     /**

@@ -25,7 +25,7 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function handle(Request $request, AccessDeniedException $exception)
+    public function handle(Request $request, AccessDeniedException $exception): ?Response
     {
         return new JsonResponse(
             [

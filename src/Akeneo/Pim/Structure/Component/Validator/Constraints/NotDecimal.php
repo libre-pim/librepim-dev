@@ -14,4 +14,18 @@ class NotDecimal extends Constraint
 {
     /** @var string */
     public $message = 'This value should not be a decimal.';
+
+    // Add this property to define the default option
+    public $allowDecimal = false;
+    
+    // Add this method to specify the default option
+    public function getDefaultOption()
+    {
+        return 'allowDecimal';
+    }
+    
+    public function getRequiredOptions()
+    {
+        return [];
+    }
 }

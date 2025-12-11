@@ -1,4 +1,5 @@
 pim_enrich_value_rest_validate:
     path: '/validate'
-    defaults: { _controller: pim_enrich.controller.rest.value:validateAction }
+    defaults:
+        _controller: 'pim_enrich.controller.rest.value::validateAction'
     methods: [POST]

@@ -4,7 +4,7 @@ namespace Specification\Akeneo\Pim\Enrichment\Bundle\Command;
 
 use Akeneo\Pim\Enrichment\Bundle\Command\BackoffElasticSearchStateHandler;
 use Akeneo\Pim\Enrichment\Bundle\Command\BulkEsHandlerInterface;
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
+use Elastic\Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use PhpSpec\ObjectBehavior;
 use PHPStan\Type\Php\ArgumentBasedFunctionReturnTypeExtension;
 use Prophecy\Argument;

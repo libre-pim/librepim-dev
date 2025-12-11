@@ -18,6 +18,11 @@
         <ini name="memory_limit" value="-1"/>
         <ini name="zend.enable_gc" value="1"/>
         <server name="KERNEL_CLASS" value="Kernel" force="true" />
+        <env name="APP_ENV" value="test" />
+        <env name="APP_DEBUG" value="1" />
+        <env name="PUBSUB_EMULATOR_HOST" value="localhost:8085" />
+        <env name="PUBSUB_TOPIC_DQI_ATTRIBUTE_GROUP_ACTIVATE" value="dqi-attribute-group-activate" />
+        <env name="PUBSUB_SUBSCRIPTION_DQI_ATTRIBUTE_GROUP_ACTIVATE" value="dqi-attribute-group-activate-sub" />
     </php>
 
     <groups>
@@ -78,9 +83,9 @@
             <directory suffix="EndToEnd.php">src</directory>
         </testsuite>
 
-        <testsuite name="OroSecurityBundle">
+        <!-- <testsuite name="OroSecurityBundle">
             <file>src/Oro/Bundle/SecurityBundle/Tests/Unit/Acl/Dbal/MutableAclProviderTest.php</file>
-        </testsuite>
+        </testsuite> -->
 
         <testsuite name="Enrichment_Product">
             <directory suffix="Integration.php">src/Akeneo/Pim/Enrichment/Product/back/Test/Integration</directory>

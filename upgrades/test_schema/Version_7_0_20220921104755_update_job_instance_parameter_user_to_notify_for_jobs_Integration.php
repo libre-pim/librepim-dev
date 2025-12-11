@@ -112,7 +112,7 @@ SQL;
 
     private function jobIsMigrated(string $jobCode, array $usersToNotify): bool
     {
-        $this->jobInstanceRepository->clear();
+        $this->get('doctrine.orm.entity_manager')->clear();
 
         /** @var JobInstance $jobInstance */
         $jobInstance = $this->jobInstanceRepository->findOneByCode($jobCode);

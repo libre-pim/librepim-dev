@@ -222,7 +222,7 @@ final class Version_7_0_20220429131804_execute_uuid_migration_Integration extend
             (int) $this->connection->executeQuery(<<<SQL
 SELECT COUNT(*)
 FROM information_schema.columns
-WHERE table_name='pim_catalog_completeness' AND column_name='product_id'
+WHERE table_schema = DATABASE() AND table_name='pim_catalog_completeness' AND column_name='product_id'
 SQL
             )->fetchOne()
         );
@@ -280,9 +280,10 @@ SQL
     private function installOldSchemaWithFixtures(): void
     {
         // Schema
-        $this->connection->executeQuery('drop database if exists akeneo_pim_test');
-        $this->connection->executeQuery('create database akeneo_pim_test');
-        $this->connection->executeQuery('use ' . \getenv('APP_DATABASE_NAME')); // Needed after drop/create
+        $databaseName = \getenv('APP_DATABASE_NAME');
+        $this->connection->executeQuery('DROP DATABASE IF EXISTS ' . $databaseName);
+        $this->connection->executeQuery('CREATE DATABASE ' . $databaseName);
+        $this->connection->executeQuery('USE ' . $databaseName);
 
         $this->executeLargeQuery(<<<SQL
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;

@@ -83,10 +83,10 @@ class DatagridViewController
 
         $user = $this->tokenStorage->getToken()->getUser();
 
-        $options = $request->query->get('options', []);
+        $options = $request->get('options', []);
         $options = array_merge(['limit' => 20, 'page' => 1], $options);
 
-        $term = $request->query->get('search', '');
+        $term = $request->get('search', '');
 
         $views = $this->datagridViewRepo->findAllDatagridViewsBySearch($user, $alias, $term);
 
@@ -150,7 +150,7 @@ class DatagridViewController
             return new RedirectResponse('/');
         }
 
-        $view = $request->request->get('view', null);
+        $view = $request->get('view', null);
 
         if (null === $view) {
             throw new BadRequestHttpException('Parameter "view" needed in the request.');

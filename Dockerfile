@@ -1,5 +1,10 @@
 FROM httpd:2.4-bullseye AS base
 
+LABEL maintainer="LibrePIM Contributors" \
+      description="LibrePIM - Long-Term Support Fork of Akeneo PIM Community Edition" \
+      version="7.0.0" \
+      repository="https://github.com/libre-pim/librepim-dev"
+
 ENV PHP_CONF_DATE_TIMEZONE=UTC \
     PHP_CONF_MAX_EXECUTION_TIME=60 \
     PHP_CONF_MEMORY_LIMIT=512M \
@@ -51,8 +56,8 @@ RUN echo 'APT::Install-Recommends "0" ; APT::Install-Suggests "0" ;' > /etc/apt/
     sed -i "s#listen = /run/php/php8.1-fpm.sock#listen = 9000#g" /etc/php/8.1/fpm/pool.d/www.conf && \
     mkdir -p /run/php
 
-COPY docker/build/akeneo.ini /etc/php/8.1/cli/conf.d/99-akeneo.ini
-COPY docker/build/akeneo.ini /etc/php/8.1/fpm/conf.d/99-akeneo.ini
+COPY docker/build/akeneo.ini /etc/php/8.1/cli/conf.d/99-librepim.ini
+COPY docker/build/akeneo.ini /etc/php/8.1/fpm/conf.d/99-librepim.ini
 
 CMD ["/usr/bin/supervisord", "-c", "docker/supervisord.conf"]
 
@@ -79,10 +84,10 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY docker/build/xdebug.ini /etc/php/8.1/cli/conf.d/99-akeneo-xdebug.ini
-COPY docker/build/xdebug.ini /etc/php/8.1/fpm/conf.d/99-akeneo-xdebug.ini
-COPY docker/build/blackfire.ini /etc/php/8.1/cli/conf.d/99-akeneo-blackfire.ini
-COPY docker/build/blackfire.ini /etc/php/8.1/fpm/conf.d/99-akeneo-blackfire.ini
+COPY docker/build/xdebug.ini /etc/php/8.1/cli/conf.d/99-librepim-xdebug.ini
+COPY docker/build/xdebug.ini /etc/php/8.1/fpm/conf.d/99-librepim-xdebug.ini
+COPY docker/build/blackfire.ini /etc/php/8.1/cli/conf.d/99-librepim-blackfire.ini
+COPY docker/build/blackfire.ini /etc/php/8.1/fpm/conf.d/99-librepim-blackfire.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 RUN chmod +x /usr/local/bin/composer

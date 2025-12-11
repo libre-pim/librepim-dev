@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Twig\Environment;
 
 /**
  * Controller used to render categories of an entity (like products or product models).
@@ -26,18 +27,21 @@ abstract class AbstractListCategoryController extends AbstractController
     protected string $categoryClass;
     protected string $acl;
     protected string $template;
+    protected Environment $twig;
 
     public function __construct(
         CategoryRepositoryInterface $categoryRepository,
         SecurityFacade $securityFacade,
         string $categoryClass,
         string $acl,
-        string $template
+        string $template,
+        Environment $twig
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->securityFacade = $securityFacade;
         $this->categoryClass = $categoryClass;
         $this->acl = $acl;
+        $this->twig = $twig;
         $this->template = $template;
     }
 
@@ -64,7 +68,12 @@ abstract class AbstractListCategoryController extends AbstractController
 
         $trees = $this->getFilledTree($category, $categories);
 
-        return $this->render($this->template, ['trees' => $trees, 'categories' => $categories]);
+        $content = $this->twig->render($this->template, ['trees' => $trees, 'categories' => $categories]);
+
+        $response = new Response();
+        $response->setContent($content);
+
+        return $response;
     }
 
     /**

@@ -11,6 +11,7 @@ use Akeneo\Tool\Component\StorageUtils\Factory\SimpleFactoryInterface;
 use Akeneo\Tool\Component\StorageUtils\Saver\SaverInterface;
 use Akeneo\UserManagement\Bundle\Doctrine\ORM\Repository\RoleWithPermissionsRepository;
 use Akeneo\UserManagement\Component\Model\Role;
+use Akeneo\UserManagement\Component\Model\UserInterface;
 use Akeneo\UserManagement\Component\Storage\Saver\RoleWithPermissionsSaver;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\DBAL\Connection;
@@ -148,7 +149,8 @@ class Version_6_0_20210908142400_add_product_web_api_acl_Integration extends Tes
     {
         /** @var AccessDecisionManagerInterface $decisionManager */
         $decisionManager = $this->get('security.access.decision_manager');
-        $token = new UsernamePasswordToken('username', 'main', [$role]);
+        $user = $this->getTestUser();
+        $token = new UsernamePasswordToken($user, 'main', [$role]);
 
         foreach ($acls as $acl => $expectedValue) {
             assert(is_bool($expectedValue));
@@ -189,5 +191,14 @@ SQL;
         $migration = str_replace('Version', '', $migration);
 
         return $migration;
+    }
+
+    private function getTestUser(): UserInterface
+    {
+        $user = $this->get('pim_user.factory.user')->create();
+        $user->setUsername('username');
+        $user->setEmail('username@example.com');
+
+        return $user;
     }
 }

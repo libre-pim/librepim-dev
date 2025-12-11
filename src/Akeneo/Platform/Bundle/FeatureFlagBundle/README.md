@@ -134,7 +134,10 @@ You can easily disable a route if your feature is disabled by using the `_featur
 ```yaml
 pim_analytics_system_info_index:
     path: /system_info
-    defaults: { _controller: 'pim_analytics.controller.system_info:indexAction', _format: html, _feature: 'myCoolFeature' }
+    defaults: 
+        _controller: 'pim_analytics.controller.system_info:indexAction'
+        _format: html
+        _feature: 'myCoolFeature'
 ```
 
 ### Switching DIC services based on a feature flag

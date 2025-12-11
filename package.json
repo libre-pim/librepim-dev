@@ -1,8 +1,25 @@
 {
-  "name": "pim-community-dev",
+  "name": "librepim-dev",
   "version": "7.0.0",
-  "description": "Akeneo PIM Application",
-  "homepage": "https://www.akeneo.com/",
+  "description": "LibrePIM - Community-maintained LTS fork of Akeneo PIM Community Edition. Not affiliated with Akeneo SAS.",
+  "homepage": "https://github.com/libre-pim/librepim-dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/libre-pim/librepim-dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/libre-pim/librepim-dev/issues"
+  },
+  "keywords": [
+    "pim",
+    "product-information-management",
+    "akeneo",
+    "fork",
+    "community",
+    "lts",
+    "long-term-support",
+    "open-source"
+  ],
   "config": {
     "source": ".",
     "styles": "frontend/build/compile-less.js"
@@ -52,14 +69,7 @@
     "test:e2e:open": "cypress open",
     "test:e2e:run": "cypress run"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/akeneo/pim-community-dev.git"
-  },
   "license": "OSL-3.0",
-  "bugs": {
-    "url": "https://github.com/akeneo/pim-community-dev/issues"
-  },
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",

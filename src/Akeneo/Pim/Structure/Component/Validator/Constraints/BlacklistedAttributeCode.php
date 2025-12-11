@@ -16,4 +16,18 @@ class BlacklistedAttributeCode extends Constraint
     {
         return 'pim_blacklisted_attribute_code_validator';
     }
+    
+    // Add this property to define the default option
+    public $blacklistedCodes = [];
+    
+    // Add this method to specify the default option
+    public function getDefaultOption()
+    {
+        return 'blacklistedCodes';
+    }
+    
+    public function getRequiredOptions()
+    {
+        return ['blacklistedCodes'];
+    }
 }

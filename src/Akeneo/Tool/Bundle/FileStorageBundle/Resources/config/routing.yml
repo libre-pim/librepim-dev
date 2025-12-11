@@ -1,5 +1,6 @@
 # Internal API
 akeneo_file_storage_upload_image:
     path: '/image-media'
-    defaults: { _controller: pim_api.controller.internal_api.upload_image }
+    defaults:
+        _controller: 'pim_api.controller.internal_api.upload_image'
     methods: [POST]

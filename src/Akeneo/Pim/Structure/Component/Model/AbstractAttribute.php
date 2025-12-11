@@ -446,7 +446,7 @@ abstract class AbstractAttribute implements AttributeInterface
     /**
      * {@inheritdoc}
      */
-    public function getGroupSequence()
+    public function getGroupSequence(): array|\Symfony\Component\Validator\Constraints\GroupSequence
     {
         $groups = ['Attribute', $this->getType()];
 

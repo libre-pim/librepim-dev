@@ -1,19 +1,23 @@
 pim_datagrid_load:
     path: /{alias}/load
-    defaults: { _controller: pim_datagrid.controller.datagrid:loadAction }
+    defaults:
+        _controller: 'pim_datagrid.controller.datagrid::loadAction'
     methods: ['GET', 'POST']
 
 pim_datagrid_productgrid_attributes_filters:
     path: /product-grid/attributes-filters
-    defaults: { _controller: pim_datagrid.controller.productgrid:getAttributesFiltersAction }
+    defaults:
+        _controller: 'pim_datagrid.controller.productgrid::getAttributesFiltersAction'
     methods: ['GET']
 
 pim_datagrid_productgrid_available_columns:
     path: /product-grid/available-columns
-    defaults: { _controller: pim_datagrid.controller.productgrid:getAvailableColumnsAction }
+    defaults:
+        _controller: 'pim_datagrid.controller.productgrid::getAvailableColumnsAction'
     methods: ['GET']
 
 pim_datagrid_productgrid_available_columns_groups:
     path: /product-grid/available-columns-groups
-    defaults: { _controller: pim_datagrid.controller.productgrid:getAvailableColumnsGroupsAction }
+    defaults:
+        _controller: 'pim_datagrid.controller.productgrid::getAvailableColumnsGroupsAction'
     methods: ['GET']

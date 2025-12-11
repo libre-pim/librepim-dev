@@ -19,3 +19,8 @@ services:
     _defaults:
         autowire: false      # Automatically injects dependencies in your services.
         autoconfigure: false # Automatically registers your services as commands, event subscribers, etc.
+
+    session:
+        class: Symfony\Component\HttpFoundation\Session\Session
+        factory: ['@session.factory', 'createSession']
+        public: true

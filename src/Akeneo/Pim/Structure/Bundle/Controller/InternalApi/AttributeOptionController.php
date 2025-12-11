@@ -58,7 +58,7 @@ class AttributeOptionController
         $query  = $request->query;
         $search = $query->get('search');
 
-        $options = $query->get('options', []);
+        $options = $query->all('options') ?? [];
         $options['identifier'] = $identifier;
 
         $attributeOptions = $this->attributeOptionRepository->findBySearch(

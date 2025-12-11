@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
+use Symfony\Component\Validator\Mapping\MetadataInterface;
 
 /**
  * Create a ClassMetadata instance for an ValueInterface instance
@@ -48,7 +49,7 @@ class ProductValueMetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getMetadataFor($value)
+    public function getMetadataFor($value): MetadataInterface
     {
         if (!$value instanceof ValueInterface) {
             throw new NoSuchMetadataException();
@@ -62,7 +63,7 @@ class ProductValueMetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasMetadataFor($value)
+    public function hasMetadataFor($value): bool
     {
         if ($value instanceof ValueInterface) {
             return true;

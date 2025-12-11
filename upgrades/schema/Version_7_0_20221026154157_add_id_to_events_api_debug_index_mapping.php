@@ -6,7 +6,7 @@ namespace Pim\Upgrade\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientBuilder;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -53,7 +53,7 @@ final class Version_7_0_20221026154157_add_id_to_events_api_debug_index_mapping 
     {
         $builder = $this->container->get('akeneo_elasticsearch.client_builder');
         $builder->setHosts([$this->container->getParameter('index_hosts')]);
-        /** @var \Elasticsearch\Client $client */
+        /** @var \Elastic\Elasticsearch\Client $client */
         $client = $builder->build();
         $alias = $this->container->getParameter('events_api_debug_index_name');
         $copy = sprintf('%s_copy', $alias);

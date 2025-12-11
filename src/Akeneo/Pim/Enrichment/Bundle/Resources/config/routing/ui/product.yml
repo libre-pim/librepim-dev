@@ -15,14 +15,17 @@ pim_enrich_product_edit_categories:
 
 pim_enrich_product_toggle_status:
     path: /{uuid}/toggle-status
-    defaults: { _controller: pim_enrich.controller.product:toggleStatusAction }
+    defaults:
+        _controller: 'pim_enrich.controller.product::toggleStatusAction'
     requirements:
         uuid: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
     methods: [POST]
 
 pim_enrich_product_listcategories:
     path: /list-categories/product/{uuid}/parent/{categoryId}
-    defaults: { _controller: pim_enrich.controller.product:listCategoriesAction, _format: json }
+    defaults:
+        _controller: 'pim_enrich.controller.product::listCategoriesAction'
+        _format: json
     requirements:
         uuid: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
         categoryId: \d+

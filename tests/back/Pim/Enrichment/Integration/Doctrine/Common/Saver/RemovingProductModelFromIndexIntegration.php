@@ -7,7 +7,7 @@ namespace AkeneoTest\Pim\Enrichment\Integration\Doctrine\Common\Saver;
 use Akeneo\Test\Integration\TestCase;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Client;
 use AkeneoTest\Pim\Enrichment\Integration\Fixture\EntityBuilder;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elastic\Elasticsearch\Common\Exceptions\Missing404Exception;
 use Ramsey\Uuid\UuidInterface;
 
 /**

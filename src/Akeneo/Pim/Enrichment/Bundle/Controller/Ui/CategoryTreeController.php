@@ -29,6 +29,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Environment;
 
 /**
  * Category Tree Controller
@@ -57,6 +58,7 @@ class CategoryTreeController extends AbstractController
         private GetCategoryInterface $getCategory,
         private GetCategoryTreesInterface $getCategoryTrees,
         private CommandBus $commandBus,
+        private Environment $twig,
         array $rawConfiguration,
     ) {
         $resolver = new OptionsResolver();
@@ -201,7 +203,7 @@ class CategoryTreeController extends AbstractController
         $includeParent = (bool)$request->get('include_parent', false);
         $includeSub = (bool)$request->get('include_sub', false);
 
-        return $this->render(
+        $content = $this->twig->render(
             $view,
             [
                 'categories' => $categories,
@@ -213,6 +215,11 @@ class CategoryTreeController extends AbstractController
             ],
             new JsonResponse()
         );
+
+        $response = new Response();
+        $response->setContent($content);
+
+        return $response;
     }
 
     /**

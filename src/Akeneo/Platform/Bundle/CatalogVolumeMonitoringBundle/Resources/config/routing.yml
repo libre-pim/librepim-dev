@@ -3,5 +3,7 @@ pim_enrich_catalog_volume_index:
 
 pim_volume_monitoring_get_volumes:
     path: /catalog-volume-monitoring/volumes
-    defaults: { _controller: pim_volume_monitoring.controller.volume_monitoring:getVolumesAction, _format: json }
+    defaults:
+        _controller: 'pim_volume_monitoring.controller.volume_monitoring::getVolumesAction'
+        _format: json
     methods: [GET]

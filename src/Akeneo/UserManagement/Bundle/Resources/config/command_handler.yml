@@ -7,6 +7,6 @@ services:
           - '@pim_user.saver.user'
           - '@Akeneo\UserManagement\Domain\PasswordCheckerInterface'
           - '@event_dispatcher'
-          - '@session'
+          - '@request_stack'
           - '@pim_user.repository.user'
           - '@security.token_storage'

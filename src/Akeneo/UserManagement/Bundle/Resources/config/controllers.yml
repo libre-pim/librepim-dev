@@ -2,6 +2,7 @@ parameters:
     pim_user.controller.user_rest.class: Akeneo\UserManagement\Bundle\Controller\Rest\UserController
     pim_user.controller.security_rest.class: Akeneo\UserManagement\Bundle\Controller\Rest\SecurityController
     pim_user.controller.user_group_rest.class: Akeneo\UserManagement\Bundle\Controller\Rest\UserGroupController
+    pim_user.controller.user_role.class: Akeneo\UserManagement\Bundle\Controller\RoleController
 
 services:
     pim_user.controller.user_rest:
@@ -55,6 +56,7 @@ services:
             - '@translator'
             - '@pim_user.form.group'
             - '@event_dispatcher'
+            - '@twig'
         calls:
             - [ 'setContainer', [ '@service_container' ] ]
 
@@ -63,7 +65,7 @@ services:
         class: 'Akeneo\UserManagement\Bundle\Controller\ResetController'
         arguments:
             - '@pim_user.manager'
-            - '@session'
+            - '@request_stack'
             - '@pim_user.form.handler.reset'
             - '@security.token_storage'
             - '@pim_user.form.reset'
@@ -73,7 +75,7 @@ services:
 
     pim_user.controller.role:
         public: true
-        class: 'Akeneo\UserManagement\Bundle\Controller\RoleController'
+        class: '%pim_user.controller.user_role.class%'
         arguments:
             - '@pim_user.repository.role'
             - '@pim_user.remover.role'
@@ -81,6 +83,8 @@ services:
             - '@pim_user.form.handler.acl_role'
             - '@translator'
             - '@Akeneo\UserManagement\Domain\Permissions\Query\EditRolePermissionsRoleQuery'
+            - '@pim_user.factory.role'
+            - '@twig'
         calls:
             - [ 'setContainer', [ '@service_container' ] ]
 
@@ -94,7 +98,8 @@ services:
             - '@twig'
             - '%pim_user.login_form.action_route%'
             - '%pim_user.login_form.additional_hidden_fields%'
-
+        calls:
+            - [setContainer, ['@service_container']]
 
     Akeneo\UserManagement\Bundle\Controller\Rest\FindAllProfilesController:
         public: true

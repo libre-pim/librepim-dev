@@ -78,7 +78,7 @@ final class Version_7_0_20221017143357_add_category_template_table_Integration e
 
     private function foreignKeyExists(string $foreignKeyName, string $tableName): bool
     {
-        $foreignKeys = $this->connection->getSchemaManager()->listTableForeignKeys($tableName);
+        $foreignKeys = $this->connection->createSchemaManager()->listTableForeignKeys($tableName);
         $foreignKeyFound = array_filter($foreignKeys, function ($foreignKey) use ($foreignKeyName) {
             return ($foreignKey->getName() === $foreignKeyName);
         });

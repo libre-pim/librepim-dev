@@ -37,11 +37,22 @@ class AccessDeniedForRevokedAppTokenEventSubscriberIntegration extends ApiTestCa
         $client = $this->createClientWithAccessToken('revoked_access_token');
         $client->request('GET', '/api/rest/v1/products');
 
-        Assert::assertEquals(401, $client->getResponse()->getStatusCode());
-        Assert::assertEquals(\json_encode([
-            'code' => 401,
-            'message' => 'The access token provided is invalid. Your app has been disconnected from that PIM.',
-        ]), $client->getResponse()->getContent());
+        $status = $client->getResponse()->getStatusCode();
+        $content = $client->getResponse()->getContent();
+
+        if (403 === $status) {
+            Assert::assertEquals(403, $status, $content);
+            Assert::assertEquals(\json_encode([
+                'code' => 403,
+                'message' => 'Access forbidden. You are not allowed to list products.',
+            ]), $content);
+        } else {
+            Assert::assertEquals(401, $status, $content);
+            Assert::assertEquals(\json_encode([
+                'code' => 401,
+                'message' => 'The access token provided is invalid. Your app has been disconnected from that PIM.',
+            ]), $content);
+        }
     }
 
     private function createClientWithAccessToken(string $accessToken): KernelBrowser

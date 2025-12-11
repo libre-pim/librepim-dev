@@ -97,7 +97,8 @@ class FamilyVariantController
      */
     public function indexAction(Request $request): JsonResponse
     {
-        $options = $request->query->get('options', ['limit' => 20]);
+        $options = $request->query->all('options');
+        $options += ['limit' => 20];
 
         if ($request->query->has('family_id')) {
             $options['familyId'] = $request->query->get('family_id');

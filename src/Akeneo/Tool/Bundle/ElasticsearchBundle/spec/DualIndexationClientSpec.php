@@ -8,9 +8,9 @@ use Akeneo\Tool\Bundle\ElasticsearchBundle\Client;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\DualIndexationClient;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Refresh;
-use Elasticsearch\Client as NativeClient;
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\Namespaces\IndicesNamespace;
+use Elastic\Elasticsearch\Client as NativeClient;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Endpoints\Indices;
 use PhpSpec\ObjectBehavior;
 
 class DualIndexationClientSpec extends ObjectBehavior
@@ -106,7 +106,7 @@ class DualIndexationClientSpec extends ObjectBehavior
         $this->deleteByQuery($query);
     }
 
-    function it_refreshes_both_indexes(NativeClient $nativeClient, Client $dualClient, IndicesNamespace $indices)
+    function it_refreshes_both_indexes(NativeClient $nativeClient, Client $dualClient, Indices $indices)
     {
         $nativeClient->indices()->willReturn($indices);
         $indices->refresh(['index' => 'an_index_name'])->willReturn(['errors' => false]);

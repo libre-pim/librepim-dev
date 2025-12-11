@@ -1,4 +1,5 @@
 feature_flag:
     path: /configuration/feature-flags
-    defaults: { _controller: akeneo.feature_flag.service.controller:isEnabledAction }
+    defaults: 
+        _controller: 'akeneo.feature_flag.service.controller::isEnabledAction'
     methods: [GET]

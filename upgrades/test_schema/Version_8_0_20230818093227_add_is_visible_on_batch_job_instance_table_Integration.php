@@ -75,7 +75,7 @@ final class Version_8_0_20230818093227_add_is_visible_on_batch_job_instance_tabl
 
     private function columnExists(): bool
     {
-        $columns = $this->connection->getSchemaManager()->listTableColumns(self::TABLE_NAME);
+        $columns = $this->connection->createSchemaManager()->listTableColumns(self::TABLE_NAME);
 
         return isset($columns[self::IS_VISIBLE_COLUMN]);
     }

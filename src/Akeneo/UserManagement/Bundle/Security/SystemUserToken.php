@@ -23,7 +23,7 @@ final class SystemUserToken extends AbstractToken
     public function __construct(UserInterface $user)
     {
         $this->setUser($user);
-        $this->setAuthenticated(true);
+        // $this->setAuthenticated(true);
 
         parent::__construct($user->getRoles());
     }

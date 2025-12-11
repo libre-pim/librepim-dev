@@ -8,7 +8,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.product:partialUpdateAction'
+            - 'pim_api.controller.product::partialUpdateAction'
             - 'identifier'
             - 'code'
 
@@ -28,7 +28,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.product_model:partialUpdateAction'
+            - 'pim_api.controller.product_model::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -38,7 +38,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.family:partialUpdateAction'
+            - 'pim_api.controller.family::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -48,7 +48,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.family_variant:partialUpdateAction'
+            - 'pim_api.controller.family_variant::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -58,7 +58,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.category:partialUpdateAction'
+            - 'pim_api.controller.category::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -68,7 +68,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.attribute:partialUpdateAction'
+            - 'pim_api.controller.attribute::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -78,7 +78,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.attribute_group:partialUpdateAction'
+            - 'pim_api.controller.attribute_group::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -88,7 +88,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.association_type:partialUpdateAction'
+            - 'pim_api.controller.association_type::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -98,7 +98,7 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.channel:partialUpdateAction'
+            - 'pim_api.controller.channel::partialUpdateAction'
             - 'code'
             - 'code'
 
@@ -108,6 +108,6 @@ services:
             - '@http_kernel'
             - '@pim_catalog.validator.unique_value_set'
             - '%pim_api.configuration%'
-            - 'pim_api.controller.attribute_option:partialUpdateAction'
+            - 'pim_api.controller.attribute_option::partialUpdateAction'
             - 'code'
             - 'code'

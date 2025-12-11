@@ -13,5 +13,6 @@ pim_importexport_export_profile_edit:
 
 pim_importexport_category_tree_list:
     path: /category-trees
-    defaults: { _controller: pim_import_export.controller.category_trees }
+    defaults:
+        _controller: 'pim_import_export.controller.category_trees'
     methods: [POST]

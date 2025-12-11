@@ -7,7 +7,7 @@ namespace Pim\Upgrade\Schema\Tests;
 use Akeneo\Test\Integration\TestCase;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Client;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
-use Elasticsearch\Client as NativeClient;
+use Elastic\Elasticsearch\Client as NativeClient;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 

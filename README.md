@@ -1,5 +1,7 @@
 # **Librepim – Community-Driven LTS Fork of Akeneo PIM Community Edition**
 
+> ⚠️ **This is a community fork, not an official Akeneo project.** Librepim is maintained independently to provide long-term support for Akeneo PIM Community Edition users. For details, see [CONTRIBUTORS.md](./CONTRIBUTORS.md).
+
 **Librepim** is an open-source, community-maintained fork of the **Akeneo PIM Community Edition**.
 Its goal is to provide **Long-Term Support (LTS)**, continued improvements, security fixes, and compatibility updates for teams that rely on the community version of Akeneo for product information management.
 

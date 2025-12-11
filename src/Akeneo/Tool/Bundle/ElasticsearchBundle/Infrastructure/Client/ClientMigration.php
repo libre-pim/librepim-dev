@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Akeneo\Tool\Bundle\ElasticsearchBundle\Infrastructure\Client;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
 use Webmozart\Assert\Assert;
 
 final class ClientMigration implements ClientMigrationInterface

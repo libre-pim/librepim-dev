@@ -138,7 +138,7 @@ FROM pim_data_quality_insights_product_criteria_evaluation
 WHERE status = 'pending';
 SQL;
 
-        return intval($this->dbConnection->executeQuery($query)->fetchOne());
+        return intval($this->dbConnection->executeQuery($query)->fetchFirstColumn());
     }
 
     private function countProductModelsToEvaluate(): int
@@ -149,6 +149,6 @@ FROM pim_data_quality_insights_product_model_criteria_evaluation
 WHERE status = 'pending';
 SQL;
 
-        return intval($this->dbConnection->executeQuery($query)->fetchOne());
+        return intval($this->dbConnection->executeQuery($query)->fetchFirstColumn());
     }
 }

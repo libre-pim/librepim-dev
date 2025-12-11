@@ -1,4 +1,5 @@
 pim_enrich_sequential_edit_rest_get_ids:
     path: '/'
-    defaults: { _controller: pim_enrich.controller.rest.sequential_edit:getIdsAction }
+    defaults:
+        _controller: 'pim_enrich.controller.rest.sequential_edit::getIdsAction'
     methods: [POST]

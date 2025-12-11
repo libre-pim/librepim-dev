@@ -32,9 +32,9 @@ class ProductRepository extends EntityRepository implements
      */
     public function getItemsFromIdentifiers(array $identifiers)
     {
-        $uuidsAsBytes = $this->getEntityManager()->getConnection()->fetchFirstColumn(
+        $uuidsAsStrings = $this->getEntityManager()->getConnection()->fetchFirstColumn(
             <<<SQL
-            SELECT product_uuid
+            SELECT BIN_TO_UUID(product_uuid) as product_uuid
             FROM pim_catalog_product_unique_data
             WHERE attribute_id = :attributeId
             AND raw_data IN (:identifiers)
@@ -49,7 +49,7 @@ class ProductRepository extends EntityRepository implements
             ]
         );
 
-        return $this->findBy(['uuid' => $uuidsAsBytes]);
+        return $this->findBy(['uuid' => $uuidsAsStrings]);
     }
 
     /**
@@ -61,16 +61,24 @@ class ProductRepository extends EntityRepository implements
             return [];
         }
 
-        $uuidsAsBytes = [];
+        $normalizedUuids = [];
         foreach ($uuids as $uuid) {
-            if (Uuid::isValid($uuid)) {
-                $uuidsAsBytes[] = Uuid::fromString($uuid)->getBytes();
-            } else {
-                $uuidsAsBytes[] = $uuid;
+            if ($uuid instanceof UuidInterface) {
+                $normalizedUuids[] = $uuid;
+            } elseif (is_string($uuid)) {
+                if (Uuid::isValid($uuid)) {
+                    $normalizedUuids[] = $uuid;
+                } elseif (16 === strlen($uuid)) {
+                    try {
+                        $normalizedUuids[] = Uuid::fromBytes($uuid);
+                    } catch (\Exception $e) {
+                        // Ignore invalid binary
+                    }
+                }
             }
         }
 
-        return $this->findBy(['uuid' => $uuidsAsBytes]);
+        return $this->findBy(['uuid' => $normalizedUuids]);
     }
 
     /**

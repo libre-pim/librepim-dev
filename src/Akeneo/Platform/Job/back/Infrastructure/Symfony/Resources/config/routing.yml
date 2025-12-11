@@ -12,15 +12,18 @@ pim_enrich_job_tracker_index:
 
 akeneo_job_index_action:
   path: /rest/process-tracker
-  defaults: { _controller: akeneo.job.controller.get_job_execution_action }
+  defaults:
+      _controller: 'akeneo.job.controller.get_job_execution_action'
   methods: [POST]
 
 akeneo_job_get_job_type_action:
   path: /rest/process-tracker/job-type
-  defaults: { _controller: akeneo.job.controller.get_job_type_action }
+  defaults:
+      _controller: 'akeneo.job.controller.get_job_type_action'
   methods: [GET]
 
 akeneo_job_get_job_user_action:
   path: /rest/process-tracker/job-user
-  defaults: { _controller: akeneo.job.controller.get_job_user_action }
+  defaults:
+      _controller: 'akeneo.job.controller.get_job_user_action'
   methods: [GET]

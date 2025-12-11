@@ -28,6 +28,11 @@ services:
     _defaults:
         public: true
 
+    session:
+        class: Symfony\Component\HttpFoundation\Session\Session
+        factory: ['@session.factory', 'createSession']
+        public: true
+
     akeneo_integration_tests.migration_command_launcher:
         class: 'Akeneo\Tool\Component\Console\CommandLauncher'
         arguments:

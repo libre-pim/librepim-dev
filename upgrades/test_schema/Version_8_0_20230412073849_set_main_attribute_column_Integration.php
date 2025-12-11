@@ -32,6 +32,7 @@ final class Version_8_0_20230412073849_set_main_attribute_column_Integration ext
         if (!$this->mainIdentifierColumnExists()) {
             $this->addColumnMainIdentifier();
         }
+        parent::tearDown();
     }
 
     public function test_it_skip_migration_if_main_identifier_column_does_not_exist(): void
@@ -82,7 +83,7 @@ final class Version_8_0_20230412073849_set_main_attribute_column_Integration ext
 
     private function mainIdentifierColumnExists(): bool
     {
-        $columns = $this->connection->getSchemaManager()->listTableColumns('pim_catalog_attribute');
+        $columns = $this->connection->createSchemaManager()->listTableColumns('pim_catalog_attribute');
 
         return isset($columns['main_identifier']);
     }

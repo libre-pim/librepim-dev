@@ -6,6 +6,7 @@ use Akeneo\Pim\Structure\Component\Model\GroupTypeInterface;
 use Akeneo\Tool\Component\Localization\Model\TranslationInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 
 /**
  * Group entity
@@ -191,7 +192,7 @@ class Group implements GroupInterface
       *
       * @return string[]
       */
-    public function getGroupSequence()
+    public function getGroupSequence(): array|GroupSequence
     {
         return ['Group', strtolower($this->getType()->getCode())];
     }

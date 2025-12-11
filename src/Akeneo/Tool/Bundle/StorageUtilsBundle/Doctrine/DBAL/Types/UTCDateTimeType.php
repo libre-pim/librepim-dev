@@ -5,6 +5,7 @@ namespace Akeneo\Tool\Bundle\StorageUtilsBundle\Doctrine\DBAL\Types;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\DateTimeType;
+use Doctrine\DBAL\Types\Types;
 
 /**
  * Stores dates with UTC timezone
@@ -21,13 +22,13 @@ class UTCDateTimeType extends DateTimeType
     /**
      * {@inheritdoc}
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (null === $value) {
             return null;
         }
 
-        $value->setTimeZone((self::$utc) ? self::$utc : (self::$utc = new \DateTimeZone('UTC')));
+        $value->setTimeZone(self::$utc ??= new \DateTimeZone('UTC'));
 
         return parent::convertToDatabaseValue($value, $platform);
     }
@@ -35,7 +36,7 @@ class UTCDateTimeType extends DateTimeType
     /**
      * {@inheritdoc}
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
         if (null === $value || $value instanceof \DateTimeInterface) {
             return $value;
@@ -44,20 +45,20 @@ class UTCDateTimeType extends DateTimeType
         $val = \DateTime::createFromFormat(
             $platform->getDateTimeFormatString(),
             $value,
-            (self::$utc) ? self::$utc : (self::$utc = new \DateTimeZone('UTC'))
+            self::$utc ??= new \DateTimeZone('UTC')
         );
+
+        if (!$val) {
+            throw ConversionException::conversionFailed($value, Types::DATETIME_MUTABLE);
+        }
 
         $serverTimezone = date_default_timezone_get();
         $val->setTimezone(new \DateTimeZone($serverTimezone));
 
-        if (!$val) {
-            throw ConversionException::conversionFailed($value, $this->getName());
-        }
-
         $errors = $val->getLastErrors();
 
         // date was parsed to completely not valid value
-        if ($errors['warning_count'] > 0 && (int) $val->format('Y') < 0) {
+        if ($errors && $errors['warning_count'] > 0 && (int) $val->format('Y') < 0) {
             return null;
         }
 

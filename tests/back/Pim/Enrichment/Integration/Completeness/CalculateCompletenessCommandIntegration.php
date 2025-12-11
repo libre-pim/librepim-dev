@@ -12,7 +12,7 @@ use Akeneo\Pim\Enrichment\Product\API\Command\UserIntent\UserIntent;
 use Akeneo\Test\Integration\Configuration;
 use Akeneo\Test\Integration\TestCase;
 use Akeneo\Test\IntegrationTestsBundle\Launcher\CommandLauncher;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elastic\Elasticsearch\Common\Exceptions\Missing404Exception;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\UuidInterface;
 

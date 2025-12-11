@@ -81,6 +81,7 @@ final class Version_8_0_20230628104642_fill_new_completeness_table_Integration e
     protected function tearDown(): void
     {
         $this->createNewTableIfNotExists();
+        parent::tearDown();
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Specification\Akeneo\Channel\Infrastructure\Doctrine\Repository;
 
 use Akeneo\Channel\Infrastructure\Component\Repository\ChannelRepositoryInterface;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Statement;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;

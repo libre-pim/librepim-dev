@@ -1,7 +1,7 @@
 pim_category_template_rest_get_by_template_uuid:
     path: /rest/{templateUuid}
     defaults:
-        _controller: Akeneo\Category\Infrastructure\Controller\InternalApi\GetTemplateController:byTemplateUuid
+        _controller: Akeneo\Category\Infrastructure\Controller\InternalApi\GetTemplateController::byTemplateUuid
     methods: [GET]
 
 pim_category_template_rest_create:

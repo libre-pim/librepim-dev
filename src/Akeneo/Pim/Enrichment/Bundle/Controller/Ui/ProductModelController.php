@@ -9,6 +9,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Twig\Environment;
 
 /**
  * Product Model Controller
@@ -36,9 +37,10 @@ class ProductModelController extends AbstractListCategoryController
         SecurityFacade $securityFacade,
         string $categoryClass,
         string $acl,
-        string $template
+        string $template,
+        Environment $twig
     ) {
-        parent::__construct($categoryRepository, $securityFacade, $categoryClass, $acl, $template);
+        parent::__construct($categoryRepository, $securityFacade, $categoryClass, $acl, $template, $twig);
 
         $this->productModelRepository = $productModelRepository;
     }

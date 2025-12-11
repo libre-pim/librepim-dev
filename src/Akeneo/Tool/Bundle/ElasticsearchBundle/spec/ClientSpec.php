@@ -8,10 +8,10 @@ use Akeneo\Tool\Bundle\ElasticsearchBundle\Exception\MissingIdentifierException;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\IndexConfiguration;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Refresh;
-use Elasticsearch\Client as NativeClient;
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
-use Elasticsearch\Namespaces\IndicesNamespace;
+use Elastic\Elasticsearch\Client as NativeClient;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Endpoints\Indices;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -228,7 +228,7 @@ class ClientSpec extends ObjectBehavior
         $this->bulkUpdate(['40', '33'], ['40' => 'params_of_id_40', '33' => 'params_of_id_33']);
     }
 
-    public function it_deletes_an_index_without_alias($client, IndicesNamespace $indices)
+    public function it_deletes_an_index_without_alias($client, Indices $indices)
     {
         $client->indices()->willReturn($indices);
         $indices->existsAlias(['name' => 'an_index_name'])->willReturn(false);
@@ -237,7 +237,7 @@ class ClientSpec extends ObjectBehavior
         $this->deleteIndex();
     }
 
-    public function it_deletes_an_index_with_alias($client, IndicesNamespace $indices)
+    public function it_deletes_an_index_with_alias($client, Indices $indices)
     {
         $client->indices()->willReturn($indices);
         $indices->existsAlias(['name' => 'an_index_name'])->willReturn(true);
@@ -252,7 +252,7 @@ class ClientSpec extends ObjectBehavior
         $this->deleteIndex();
     }
 
-    function it_checks_if_an_index_exists($client, IndicesNamespace $indices)
+    function it_checks_if_an_index_exists($client, Indices $indices)
     {
         $client->indices()->willReturn($indices);
         $indices->exists(['index' => 'an_index_name'])->willReturn(true);
@@ -260,7 +260,7 @@ class ClientSpec extends ObjectBehavior
         $this->hasIndex()->shouldReturn(true);
     }
 
-    function it_checks_if_an_alias_exists($client, IndicesNamespace $indices)
+    function it_checks_if_an_alias_exists($client, Indices $indices)
     {
         $client->indices()->willReturn($indices);
         $indices->existsAlias(['name' => 'an_index_name'])->willReturn(true);
@@ -268,7 +268,7 @@ class ClientSpec extends ObjectBehavior
         $this->hasIndexForAlias()->shouldReturn(true);
     }
 
-    function it_refreshes_an_index($client, IndicesNamespace $indices)
+    function it_refreshes_an_index($client, Indices $indices)
     {
         $client->indices()->willReturn($indices);
         $indices->refresh(['index' => 'an_index_name'])->shouldBeCalled();
@@ -403,7 +403,9 @@ class ClientSpec extends ObjectBehavior
         ->will(function () use (&$isFirstCall) {
             if ($isFirstCall) {
                 $isFirstCall = false;
-                throw new BadRequest400Exception();
+                $response = new \Elastic\Elasticsearch\Response\Elasticsearch();
+                $response->setStatusCode(400);
+                throw new ClientResponseException($response);
             }
 
             return ['took' => 1, 'errors' => false, 'items' => [['item_value1']]];
@@ -422,6 +424,9 @@ class ClientSpec extends ObjectBehavior
 
     function it_retries_bulk_index_request_by_splitting_body_when_an_error_occurred(NativeClient $client)
     {
+        $exception = new ClientResponseException(new \Elastic\Elasticsearch\Response\Elasticsearch());
+        $exception->getResponse()->setStatusCode(400);
+
         $client->bulk([
             'body' => [
                 ['index' => ['_index' => 'an_index_name', '_id' => 'value1']],
@@ -432,7 +437,7 @@ class ClientSpec extends ObjectBehavior
                 ['identifier' => 'value3', 'name' => 'name3'],
             ],
             'refresh' => 'wait_for',
-        ])->willThrow(BadRequest400Exception::class);
+        ])->willThrow($exception);
 
         $client->bulk([
             'body' => [

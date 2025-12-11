@@ -313,7 +313,7 @@ INNER JOIN akeneo_batch_job_instance abji ON abje.job_instance_id = abji.id
 WHERE abji.code = :jobCode
 SQL,
             ['jobCode' => $jobCode]
-        )->fetchAll();
+        )->fetchAllAssociative();
         Assert::assertCount(1, $warnings);
         Assert::assertMatchesRegularExpression($pattern, $warnings[0]['reason']);
     }

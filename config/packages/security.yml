@@ -7,6 +7,7 @@ security:
         chain_provider:
             chain:
                 providers: [pim_user]
+        users_in_memory: { memory: null }
         pim_user:
             id: pim_user.provider.user
         pim_user_api:
@@ -14,7 +15,7 @@ security:
 
     password_hashers:
         Akeneo\UserManagement\Component\Model\User: sha512
-        Symfony\Component\Security\Core\User\User: plaintext
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
     firewalls:
         dev:
@@ -23,11 +24,11 @@ security:
 
         login:
             pattern:                        ^/user/(login|reset-request|send-email)$
-            provider:                       chain_provider
+            provider:                       users_in_memory
 
         reset_password:
             pattern:                        ^/user/reset/*
-            provider:                       chain_provider
+            provider:                       users_in_memory
 
         oauth_token:
             pattern:                        ^/api/oauth/v1/token
@@ -43,10 +44,11 @@ security:
 
         app_scopes_update:
             pattern:                        ^/connect/apps/v1/scopes/update
-            fos_oauth:                      true
             stateless:                      true
             access_denied_handler:          pim_api.security.access_denied_handler
             provider:                       chain_provider_api
+            custom_authenticators:
+                - fos_oauth_server.security.authentication.authenticator
 
         api_index:
             pattern:                        ^/api/rest/v1$
@@ -54,14 +56,16 @@ security:
 
         api:
             pattern:                        ^/api
-            fos_oauth:                      true
             stateless:                      true
             access_denied_handler:          pim_api.security.access_denied_handler
             provider:                       chain_provider_api
+            custom_authenticators:
+                - fos_oauth_server.security.authentication.authenticator
 
         main:
+            lazy: true
             pattern:                        ^/
-            provider:                       chain_provider
+            provider:                       pim_user
             form_login:
                 enable_csrf:                true
                 check_path:                 pim_user_security_check

@@ -2,7 +2,7 @@ services:
     Aws\S3\S3Client:
         arguments:
             -
-                endpoint: 'http://object-storage:9000/'
+                endpoint: 'http://localhost:9000/'
                 version: 'latest'
                 region: 'us-west-1'
                 use_path_style_endpoint: true

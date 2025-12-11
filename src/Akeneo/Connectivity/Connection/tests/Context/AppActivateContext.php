@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\Connectivity\Connection\Tests\EndToEnd\Context;
 
+use Akeneo\UserManagement\Component\Model\UserInterface;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\Element;
 use Context\Spin\SpinCapableTrait;
@@ -301,7 +302,8 @@ SQL;
 
         /** @var AccessDecisionManagerInterface $decisionManager */
         $decisionManager = $this->getMainContext()->getContainer()->get('security.access.decision_manager');
-        $token = new UsernamePasswordToken('username', 'main', $roles);
+        $user = $this->getTestUser();
+        $token = new UsernamePasswordToken($user, 'main', $roles);
 
         foreach ($acls as $acl => $expectedValue) {
             assert(is_bool($expectedValue));
@@ -340,5 +342,14 @@ SQL;
     private function aNewTabHasBeenOpened(): void
     {
         $this->aNewTabHasBeenOpened = true;
+    }
+
+    private function getTestUser(): UserInterface
+    {
+        $user = $this->get('pim_user.factory.user')->create();
+        $user->setUsername('username');
+        $user->setEmail('username@example.com');
+
+        return $user;
     }
 }

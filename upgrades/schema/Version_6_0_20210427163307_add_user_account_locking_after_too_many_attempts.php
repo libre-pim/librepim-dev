@@ -2,6 +2,7 @@
 
 namespace Pim\Upgrade\Schema;
 
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -13,7 +14,7 @@ final class Version_6_0_20210427163307_add_user_account_locking_after_too_many_a
 {
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(!$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform, 'Migration can only be executed safely on \'mysql\'.');
         $this->skipIf(
             $this->hasColumn($schema, 'consecutive_authentication_failure_counter') && $this->hasColumn($schema, 'authentication_failure_reset_date'),
             'consecutive_authentication_failure_counter & authentication_failure_reset_date column already exists in oro_user'

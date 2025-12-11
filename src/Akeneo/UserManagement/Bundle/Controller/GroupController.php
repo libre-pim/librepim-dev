@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class GroupController extends AbstractController
 {
@@ -27,6 +28,7 @@ class GroupController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly FormInterface $form,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly Environment $twig,
     ) {
     }
 
@@ -99,9 +101,14 @@ class GroupController extends AbstractController
             );
         }
 
-        return $this->render('@PimUser/Group/update.html.twig', [
+        $content = $this->twig->render('@PimUser/Group/update.html.twig', [
             'form' => $this->form->createView(),
         ]);
+
+        $response = new Response();
+        $response->setContent($content);
+
+        return $response;
     }
 
     private function dispatchGroupEvent(string $event, Group $group = null): void

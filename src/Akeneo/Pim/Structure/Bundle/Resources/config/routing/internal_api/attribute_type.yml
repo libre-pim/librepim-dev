@@ -1,4 +1,5 @@
 pim_enrich_attribute_type_index:
     path: /
-    defaults: { _controller: pim_enrich.controller.rest.attribute_type:indexAction }
+    defaults:
+        _controller: 'pim_enrich.controller.rest.attribute_type::indexAction'
     methods: [GET]

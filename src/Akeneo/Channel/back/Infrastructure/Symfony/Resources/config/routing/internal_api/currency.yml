@@ -1,4 +1,5 @@
 pim_enrich_currency_rest_index:
     path: /rest
-    defaults: { _controller: pim_enrich.controller.rest.currency:indexAction }
+    defaults:
+        _controller: 'pim_enrich.controller.rest.currency::indexAction'
     methods: [GET]

@@ -87,7 +87,7 @@ final class Version_8_0_20230511113912_fix_oro_access_tables_columns_length_Inte
             <<<SQL
                 SELECT CHARACTER_MAXIMUM_LENGTH 
                 FROM INFORMATION_SCHEMA.COLUMNS 
-                WHERE TABLE_SCHEMA ='akeneo_pim_test' 
+                WHERE TABLE_SCHEMA = DATABASE()
                 AND TABLE_NAME = :tableName
                 AND COLUMN_NAME = :columnName
                 LIMIT 1;

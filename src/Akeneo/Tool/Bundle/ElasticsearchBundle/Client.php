@@ -8,10 +8,9 @@ use Akeneo\Tool\Bundle\ElasticsearchBundle\Domain\Model\ElasticsearchProjection;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Exception\IndexationException;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Exception\MissingIdentifierException;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
-use Elasticsearch\Client as NativeClient;
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
-use Elasticsearch\Common\Exceptions\Conflict409Exception;
+use Elastic\Elasticsearch\Client as NativeClient;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -96,7 +95,7 @@ class Client
             $this->throwIndexationExceptionFromResponse($response);
         }
 
-        return $response;
+        return $this->toResultArray($response);
     }
 
     /**
@@ -162,11 +161,15 @@ class Client
         $length = count($params['body']);
         try {
             $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $length);
-        } catch (BadRequest400Exception) {
-            $chunkLength = intdiv($length, self::NUMBER_OF_BATCHES_ON_RETRY);
-            $chunkLength = $chunkLength % 2 == 0 ? $chunkLength : $chunkLength + 1;
+        } catch (ClientResponseException $e) {
+            if (400 === $e->getResponse()->getStatusCode()) {
+                $chunkLength = intdiv($length, self::NUMBER_OF_BATCHES_ON_RETRY);
+                $chunkLength = $chunkLength % 2 == 0 ? $chunkLength : $chunkLength + 1;
 
-            $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $chunkLength);
+                $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $chunkLength);
+            } else {
+                throw $e;
+            }
         } catch (\Exception $e) {
             throw new IndexationException($e->getMessage(), $e->getCode(), $e);
         }
@@ -184,7 +187,7 @@ class Client
         $chunkedBody = array_chunk($params['body'], $chunkLength);
         foreach ($chunkedBody as $chunk) {
             $bulkRequest['body'] = $chunk;
-            $response = $this->client->bulk($bulkRequest);
+            $response = $this->toResultArray($this->client->bulk($bulkRequest));
 
             if (isset($response['errors']) && true === $response['errors']) {
                 $mergedResponse['errors'] = true;
@@ -212,7 +215,7 @@ class Client
             'id' => $this->idPrefix.$id,
         ];
 
-        return $this->client->get($params);
+        return $this->toResultArray($this->client->get($params));
     }
 
     /**
@@ -227,7 +230,7 @@ class Client
             'body' => $body,
         ];
 
-        return $this->client->search($params);
+        return $this->toResultArray($this->client->search($params));
     }
 
     /**
@@ -242,7 +245,7 @@ class Client
             'body' => $body,
         ];
 
-        return $this->client->msearch($params);
+        return $this->toResultArray($this->client->msearch($params));
     }
 
     /**
@@ -257,7 +260,7 @@ class Client
             'body' => $body,
         ];
 
-        return $this->client->count($params);
+        return $this->toResultArray($this->client->count($params));
     }
 
     /**
@@ -272,7 +275,7 @@ class Client
             'id' => $this->idPrefix.$id,
         ];
 
-        return $this->client->delete($params);
+        return $this->toResultArray($this->client->delete($params));
     }
 
     /**
@@ -293,7 +296,7 @@ class Client
             ];
         }
 
-        return $this->client->bulk($params);
+        return $this->toResultArray($this->client->bulk($params));
     }
 
     public function bulkUpdate($documentIds, $params)
@@ -311,7 +314,7 @@ class Client
             $queries['body'][] = $params[$identifier];
         }
 
-        return $this->client->bulk($queries);
+        return $this->toResultArray($this->client->bulk($queries));
     }
 
     /**
@@ -322,11 +325,11 @@ class Client
         $indices = $this->client->indices();
         $indexName = $this->indexName;
         if ($indices->existsAlias(['name' => $indexName])) {
-            $aliases = $indices->getAlias(['name' => $indexName]);
+            $aliases = $this->toResultArray($indices->getAlias(['name' => $indexName]));
             $indexName = array_keys($aliases)[0];
         }
 
-        return $indices->delete(['index' => $indexName]);
+        return $this->toResultArray($indices->delete(['index' => $indexName]));
     }
 
     /**
@@ -347,7 +350,7 @@ class Client
             'body' => $body,
         ];
 
-        return $this->client->indices()->create($params);
+        return $this->toResultArray($this->client->indices()->create($params));
     }
 
     /**
@@ -357,12 +360,24 @@ class Client
      */
     public function hasIndex(): bool
     {
-        return $this->client->indices()->exists(['index' => $this->indexName]);
+        $response = $this->client->indices()->exists(['index' => $this->indexName]);
+
+        if ($response instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            return $response->asBool();
+        }
+
+        return (bool) $response;
     }
 
     public function hasIndexForAlias(): bool
     {
-        return $this->client->indices()->existsAlias(['name' => $this->indexName]);
+        $response = $this->client->indices()->existsAlias(['name' => $this->indexName]);
+
+        if ($response instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            return $response->asBool();
+        }
+
+        return (bool) $response;
     }
 
     /**
@@ -370,7 +385,7 @@ class Client
      */
     public function refreshIndex()
     {
-        return $this->client->indices()->refresh(['index' => $this->indexName]);
+        return $this->toResultArray($this->client->indices()->refresh(['index' => $this->indexName]));
     }
 
     /**
@@ -428,10 +443,13 @@ class Client
                     'body' => $body,
                 ]);
                 return;
-            } catch (Conflict409Exception $e) {
-                $exception = $e;
-                usleep($this->maxExpectedIndexationLatencyInMicroseconds);
-                continue;
+            } catch (ClientResponseException $e) {
+                if (409 === $e->getResponse()->getStatusCode()) {
+                    $exception = $e;
+                    usleep($this->maxExpectedIndexationLatencyInMicroseconds);
+                    continue;
+                }
+                throw $e;
             }
         } while ($attempts < $this->maxNumberOfRetries);
         throw $exception;
@@ -447,5 +465,14 @@ class Client
             'conflicts' => 'proceed',
             'body'      => $body,
         ]);
+    }
+
+    private function toResultArray($response): array
+    {
+        if ($response instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            return $response->asArray();
+        }
+
+        return (array) $response;
     }
 }

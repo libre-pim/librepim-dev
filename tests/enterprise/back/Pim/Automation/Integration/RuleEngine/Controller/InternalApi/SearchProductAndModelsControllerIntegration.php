@@ -19,7 +19,7 @@ use Akeneo\Pim\Enrichment\Product\API\Command\UserIntent\ChangeParent;
 use Akeneo\Pim\Enrichment\Product\API\Command\UserIntent\SetBooleanValue;
 use Akeneo\Test\Integration\Configuration;
 use Akeneo\Test\IntegrationTestsBundle\Helper\WebClientHelper;
-use AkeneoTestEnterprise\Pim\Automation\Integration\ControllerIntegrationTestCase;
+use AkeneoTest\UserManagement\Integration\Bundle\ControllerIntegrationTestCase;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpFoundation\Response;
 

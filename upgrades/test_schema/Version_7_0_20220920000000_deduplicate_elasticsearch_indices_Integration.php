@@ -7,7 +7,7 @@ namespace Pim\Upgrade\Schema\Tests;
 use Akeneo\Test\Integration\Configuration;
 use Akeneo\Test\Integration\TestCase;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\Client;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 

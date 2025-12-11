@@ -168,7 +168,7 @@ SQL;
 
     private function jobContainsStorage(string $jobCode, string $storageFilePath): bool
     {
-        $this->jobInstanceRepository->clear();
+        $this->get('doctrine.orm.entity_manager')->clear();
 
         /** @var JobInstance $jobInstance */
         $jobInstance = $this->jobInstanceRepository->findOneByCode($jobCode);
@@ -186,7 +186,7 @@ SQL;
 
     private function jobContainsOldFilepath(string $jobCode): bool
     {
-        $this->jobInstanceRepository->clear();
+        $this->get('doctrine.orm.entity_manager')->clear();
 
         /** @var JobInstance $jobInstance */
         $jobInstance = $this->jobInstanceRepository->findOneByCode($jobCode);

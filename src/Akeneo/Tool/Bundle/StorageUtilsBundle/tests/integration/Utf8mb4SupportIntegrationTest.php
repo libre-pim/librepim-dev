@@ -26,7 +26,7 @@ class Utf8mb4SupportIntegrationTest extends TestCase
     {
         parent::setup();
         $this->connection = $this->get('doctrine.orm.entity_manager')->getConnection();
-        $this->schemaManager = $this->connection->getSchemaManager();
+        $this->schemaManager = $this->connection->createSchemaManager();
     }
 
     public function testUtf8mb4Support() : void

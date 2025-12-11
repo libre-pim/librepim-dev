@@ -8,8 +8,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 use Twig\Environment;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class SecurityController
+class SecurityController extends AbstractController
 {
     public function __construct(
         private readonly AuthenticationUtils $authenticationUtils,

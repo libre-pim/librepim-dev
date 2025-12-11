@@ -219,13 +219,13 @@ extensions:
             title: pim_menu.item.group
             to: pim_enrich_group_index
 
-    pim-menu-automation-settings-block:
-        module: pim/menu/navigation-block
-        parent: pim-menu-settings-column
-        position: 110
-        targetZone: navigation
-        config:
-            title: pim_menu.navigation.settings.automation
+    # pim-menu-automation-settings-block:
+    #     module: pim/menu/navigation-block
+    #     parent: pim-menu-settings-column
+    #     position: 110
+    #     targetZone: navigation
+    #     config:
+    #         title: pim_menu.navigation.settings.automation
 
     # System
     pim-menu-system:

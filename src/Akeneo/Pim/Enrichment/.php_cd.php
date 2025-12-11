@@ -98,8 +98,7 @@ $rules = [
         'Akeneo\Pim\Structure\Bundle\Event\AttributeEvents',
 
         // TODO: : EASY PICK! API PaginatorInterface should catch ServerErrorResponseException and throw its own exception,
-        'Elasticsearch\Common\Exceptions\BadRequest400Exception',
-        'Elasticsearch\Common\Exceptions\ServerErrorResponseException',
+        'Elastic\Elasticsearch\Exception\ElasticsearchException',
 
         // TIP-1024: Drop UserContext
         'Akeneo\UserManagement\Bundle\Context\UserContext',
@@ -117,7 +116,7 @@ $rules = [
         // TIP-1022: Drop LocaleResolver
         'Akeneo\Platform\Bundle\UIBundle\Resolver\LocaleResolver',
 
-        'Elasticsearch\Common\Exceptions\ElasticsearchException',
+        'Elastic\Elasticsearch\Exception\ElasticsearchException',
         'Akeneo\Pim\Structure\Bundle\Manager\AttributeCodeBlacklister',
 
         // PIM-10259: Add support for Arabic characters in PDF export

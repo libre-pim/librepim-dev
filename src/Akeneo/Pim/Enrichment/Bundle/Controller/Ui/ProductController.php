@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * Product Controller
@@ -35,9 +36,10 @@ class ProductController extends AbstractListCategoryController
         string $categoryClass,
         SecurityFacade $securityFacade,
         string $acl,
-        string $template
+        string $template,
+        Environment $twig
     ) {
-        parent::__construct($categoryRepository, $securityFacade, $categoryClass, $acl, $template);
+        parent::__construct($categoryRepository, $securityFacade, $categoryClass, $acl, $template, $twig);
 
         $this->productRepository = $productRepository;
         $this->translator = $translator;

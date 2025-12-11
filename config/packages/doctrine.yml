@@ -39,15 +39,11 @@ doctrine:
 
 services:
     doctrine.result_cache_provider:
-        class: Symfony\Component\Cache\DoctrineProvider
+        class: Symfony\Component\Cache\Adapter\ArrayAdapter
         public: false
-        arguments:
-            - '@doctrine.result_cache_pool'
     doctrine.system_cache_provider:
-        class: Symfony\Component\Cache\DoctrineProvider
+        class: Symfony\Component\Cache\Adapter\FilesystemAdapter
         public: false
-        arguments:
-            - '@doctrine.system_cache_pool'
 
 framework:
     cache:

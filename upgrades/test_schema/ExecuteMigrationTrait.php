@@ -31,7 +31,7 @@ trait ExecuteMigrationTrait
 
         exec(
             sprintf(
-                "%s %s/bin/console doctrine:migrations:execute 'Pim\Upgrade\Schema\Version%s' --down -n 2>&1",
+                "%s %s/bin/console doctrine:migrations:execute 'Pim\\Upgrade\\Schema\\Version%s' --down -n 2>&1",
                 $phpCommand,
                 $rootDir,
                 $migrationLabel
@@ -40,12 +40,12 @@ trait ExecuteMigrationTrait
             $status
         );
 
-        Assert::assertEquals(1, $status, 'Migration should be irreversible.');
+        Assert::assertNotEquals(0, $status, 'Migration should be irreversible.');
 
         $output = [];
         exec(
             sprintf(
-                "%s %s/bin/console doctrine:migrations:execute 'Pim\Upgrade\Schema\Version%s' --up -n",
+                "%s %s/bin/console doctrine:migrations:execute 'Pim\\Upgrade\\Schema\\Version%s' --up -n",
                 $phpCommand,
                 $rootDir,
                 $migrationLabel

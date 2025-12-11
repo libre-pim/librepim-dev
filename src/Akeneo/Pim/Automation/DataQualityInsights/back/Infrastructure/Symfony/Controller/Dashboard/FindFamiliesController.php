@@ -18,7 +18,7 @@ class FindFamiliesController
 
     public function __invoke(Request $request): Response
     {
-        $identifiers = $request->query->get('identifiers') ?? [];
+        $identifiers = $request->query->all('identifiers');
         $families = $this->familySearchableRepository->findBySearch(null, [
             'identifiers' => $identifiers,
             'limit' => count($identifiers),

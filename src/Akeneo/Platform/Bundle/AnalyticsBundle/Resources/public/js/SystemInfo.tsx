@@ -40,6 +40,10 @@ const SystemInfo = () => {
     });
 
   const renderSystemInfoValue = (infoValue: any, keyPrefix: string = ''): any => {
+    if (infoValue === null) {
+      return '';
+    }
+
     if (typeof infoValue === 'boolean') {
       return infoValue ? '1' : '0';
     }

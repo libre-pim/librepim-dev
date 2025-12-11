@@ -112,7 +112,7 @@ SQL,
             [
                 'jobExecutionIds' => Connection::PARAM_INT_ARRAY,
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
 
         $isFailed = false;
         foreach ($results as $result) {

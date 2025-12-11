@@ -30,6 +30,10 @@ class StorageDataCollector implements DataCollectorInterface
      */
     public function collect()
     {
-        return ['mysql_version' => $this->connection->getWrappedConnection()->getAttribute(\PDO::ATTR_SERVER_VERSION)];
+        $pdo = $this->connection->getNativeConnection();
+
+        return [
+            'mysql_version' => $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION),
+        ];
     }
 }

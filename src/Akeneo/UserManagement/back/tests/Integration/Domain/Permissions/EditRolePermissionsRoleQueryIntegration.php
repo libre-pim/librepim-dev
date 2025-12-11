@@ -8,6 +8,7 @@ use Akeneo\Tool\Bundle\ConnectorBundle\Doctrine\UnitOfWorkAndRepositoriesClearer
 use Akeneo\Tool\Component\StorageUtils\Factory\SimpleFactoryInterface;
 use Akeneo\Tool\Component\StorageUtils\Saver\SaverInterface;
 use Akeneo\UserManagement\Bundle\Doctrine\ORM\Repository\RoleWithPermissionsRepository;
+use Akeneo\UserManagement\Component\Model\UserInterface;
 use Akeneo\UserManagement\Component\Storage\Saver\RoleWithPermissionsSaver;
 use Akeneo\UserManagement\Domain\Permissions\MinimumEditRolePermission;
 use Akeneo\UserManagement\Domain\Permissions\Query\EditRolePermissionsRoleQuery;
@@ -65,7 +66,8 @@ class EditRolePermissionsRoleQueryIntegration extends TestCase
 
     private function assertRoleAclsAreGranted(string $role, array $acls): void
     {
-        $token = new UsernamePasswordToken('username', 'main', [$role]);
+        $user = $this->getTestUser();
+        $token = new UsernamePasswordToken($user, 'main', [$role]);
 
         foreach ($acls as $acl => $expectedValue) {
             assert(is_bool($expectedValue));
@@ -112,5 +114,14 @@ class EditRolePermissionsRoleQueryIntegration extends TestCase
     protected function getConfiguration(): Configuration
     {
         return $this->catalog->useMinimalCatalog();
+    }
+
+    private function getTestUser(): UserInterface
+    {
+        $user = $this->get('pim_user.factory.user')->create();
+        $user->setUsername('username');
+        $user->setEmail('username@example.com');
+
+        return $user;
     }
 }

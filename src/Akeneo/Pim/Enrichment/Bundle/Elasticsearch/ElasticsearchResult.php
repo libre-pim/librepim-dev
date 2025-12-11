@@ -16,8 +16,21 @@ class ElasticsearchResult implements ResultInterface
     /** @var array */
     private $rawResult;
 
-    public function __construct(array $rawResult)
+    public function __construct($rawResult)
     {
+        if ($rawResult instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            $rawResult = $rawResult->asArray();
+        }
+
+        if (!is_array($rawResult)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument 1 passed to "%s" must be of the type array or instance of "%s", "%s" given.',
+                __METHOD__,
+                \Elastic\Elasticsearch\Response\Elasticsearch::class,
+                get_debug_type($rawResult)
+            ));
+        }
+
         $this->rawResult = $rawResult;
     }
 

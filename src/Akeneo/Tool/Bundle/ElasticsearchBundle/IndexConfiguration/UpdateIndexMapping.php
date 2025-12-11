@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration;
 
 use Akeneo\Platform\Bundle\PimVersionBundle\Version\CommunityVersion;
-use Elasticsearch\Client;
-use Elasticsearch\Namespaces\IndicesNamespace;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Endpoints\Indices;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -38,7 +38,7 @@ final class UpdateIndexMapping
         ;
     }
 
-    private function createIndexReadyForNewConfiguration(IndicesNamespace $indicesClient, string $newIndexName, Loader $indexConfiguration): UpdateIndexMapping
+    private function createIndexReadyForNewConfiguration(Indices $indicesClient, string $newIndexName, Loader $indexConfiguration): UpdateIndexMapping
     {
         $body = $indexConfiguration->load()->buildAggregated();
 
@@ -71,7 +71,7 @@ final class UpdateIndexMapping
         return $this;
     }
 
-    private function resetIndexSettings(IndicesNamespace $indicesClient, string $indexName, string $oldIndexNameOrAlias): UpdateIndexMapping
+    private function resetIndexSettings(Indices $indicesClient, string $indexName, string $oldIndexNameOrAlias): UpdateIndexMapping
     {
         $oldIndexSettings = $indicesClient->getSettings(['index' => $oldIndexNameOrAlias]);
         $oldIndexSettings = array_shift($oldIndexSettings)['settings'];
@@ -89,7 +89,7 @@ final class UpdateIndexMapping
         return $this;
     }
 
-    private function moveAliasAndRemoveOldIndex(IndicesNamespace $indicesClient, string $newIndexName, string $oldIndexNameOrAlias): UpdateIndexMapping
+    private function moveAliasAndRemoveOldIndex(Indices $indicesClient, string $newIndexName, string $oldIndexNameOrAlias): UpdateIndexMapping
     {
         $aliasAlreadyExists = $indicesClient->existsAlias(['name' => $oldIndexNameOrAlias]);
 
@@ -104,7 +104,7 @@ final class UpdateIndexMapping
         return $this;
     }
 
-    private function moveFromAliasToAlias(IndicesNamespace $indicesClient, string $newIndexName, string $aliasName): void
+    private function moveFromAliasToAlias(Indices $indicesClient, string $newIndexName, string $aliasName): void
     {
         $aliases = $indicesClient->getAlias(['name' => $aliasName]);
         $oldIndexName = array_keys($aliases)[0];
@@ -128,7 +128,7 @@ final class UpdateIndexMapping
         ]);
     }
 
-    private function moveFromIndexToAlias(IndicesNamespace $indicesClient, string $newIndexName, string $oldIndexName): void
+    private function moveFromIndexToAlias(Indices $indicesClient, string $newIndexName, string $oldIndexName): void
     {
         $indicesClient->delete(['index' => $oldIndexName]);
 

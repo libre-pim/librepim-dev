@@ -86,7 +86,7 @@ class ConfigManager
 
         /** @var Config $config */
         $config = $this->om
-            ->getRepository('OroConfigBundle:Config')
+            ->getRepository('Oro\\Bundle\\ConfigBundle\\Entity\\Config')
             ->getByEntity($entityName, $entityId);
 
         list($updated, $removed) = $this->getChanged($newSettings);
@@ -160,7 +160,7 @@ class ConfigManager
         }
 
         $this->storedSettings[$entity][$entityId] = $this->om
-            ->getRepository('OroConfigBundle:Config')
+            ->getRepository('Oro\\Bundle\\ConfigBundle\\Entity\\Config')
             ->loadSettings($entity, $entityId, $section);
 
         return true;
