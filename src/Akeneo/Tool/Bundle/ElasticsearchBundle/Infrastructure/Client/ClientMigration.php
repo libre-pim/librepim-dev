@@ -9,26 +9,27 @@ declare(strict_types=1);
 
 namespace Akeneo\Tool\Bundle\ElasticsearchBundle\Infrastructure\Client;
 
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
 use Webmozart\Assert\Assert;
 
 final class ClientMigration implements ClientMigrationInterface
 {
-    /** @var object OpenSearch\Client or ElasticsearchClientAdapter */
-    private $client;
+    private Client $client;
 
-    public function __construct($clientBuilder, array $hosts)
+    public function __construct(ClientBuilder $clientBuilder, array $hosts)
     {
         $this->client = $clientBuilder->setHosts($hosts)->build();
     }
 
     public function aliasExist(string $indexAlias): bool
     {
-        return (bool) $this->client->indices()->existsAlias(['name' => $indexAlias]);
+        return $this->client->indices()->existsAlias(['name' => $indexAlias])->asBool();
     }
 
     public function getIndexNameFromAlias(string $indexAlias): array
     {
-        $aliases = $this->client->indices()->getAlias(['name' => $indexAlias]);
+        $aliases = $this->client->indices()->getAlias(['name' => $indexAlias])->asArray();
 
         return \array_keys($aliases);
     }
@@ -48,18 +49,18 @@ final class ClientMigration implements ClientMigrationInterface
             ]
         ]);
 
-        return $reindexResponse["total"];
+        return $reindexResponse->asArray()["total"];
     }
 
     public function removeIndex(string $indexName): void
     {
-        $this->assertResponseIsAcknowledged($this->client->indices()->delete(['index' => $indexName]));
+        $this->assertResponseIsAcknowledged($this->client->indices()->delete(['index' => $indexName])->asArray());
     }
 
     public function getIndexSettings(string $index): array
     {
         $indicesClient = $this->client->indices();
-        $settingsResponse = $indicesClient->getSettings(['index' => $index]);
+        $settingsResponse = $indicesClient->getSettings(['index' => $index])->asArray();
 
         return $settingsResponse[$index]['settings']['index'];
     }
@@ -73,7 +74,7 @@ final class ClientMigration implements ClientMigrationInterface
             'body' => [
                 'index' => $indexSettings
             ]
-        ]));
+        ])->asArray());
     }
 
     public function switchIndexAlias(string $oldIndexAlias, string $oldIndexName, string $newIndexAlias, string $newIndexName): void
@@ -108,7 +109,7 @@ final class ClientMigration implements ClientMigrationInterface
                         ],
                     ]
                 ]
-            ])
+            ])->asArray()
         );
     }
 
@@ -126,7 +127,7 @@ final class ClientMigration implements ClientMigrationInterface
                         ],
                     ],
                 ]
-            ])
+            ])->asArray()
         );
     }
 
@@ -150,7 +151,7 @@ final class ClientMigration implements ClientMigrationInterface
                         ],
                     ]
                 ]
-            ])
+            ])->asArray()
         );
     }
 
@@ -162,7 +163,7 @@ final class ClientMigration implements ClientMigrationInterface
             $indicesClient->create([
                 'index' => $indexName,
                 'body' => $body
-            ])
+            ])->asArray()
         );
     }
 

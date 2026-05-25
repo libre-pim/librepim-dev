@@ -49,8 +49,8 @@ use Akeneo\Tool\Component\StorageUtils\Repository\IdentifiableObjectRepositoryIn
 use Akeneo\Tool\Component\StorageUtils\Saver\SaverInterface;
 use Akeneo\Tool\Component\StorageUtils\Updater\ObjectUpdaterInterface;
 use Akeneo\UserManagement\Component\Model\UserInterface;
-use OpenSearch\Common\Exceptions\OpenSearchException;
-use OpenSearch\Common\Exceptions\ServerErrorResponseException;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
@@ -171,9 +171,9 @@ class ProductController
                 throw new NotFoundHttpException($e->getMessage(), $e);
             }
             throw new UnprocessableEntityHttpException($e->getMessage(), $e);
-        } catch (OpenSearchException $e) {
-            if ($e->getCode() === 400) {
-                $message = json_decode($e->getMessage(), true);
+        } catch (ClientResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 400) {
+                $message = json_decode((string) $e->getResponse()->getBody(), true);
                 if (
                     null !== $message
                     && isset($message['error']['root_cause'][0]['type'])
@@ -188,7 +188,7 @@ class ProductController
                 }
             }
 
-            throw new ServerErrorResponseException($e->getMessage(), $e->getCode(), $e);
+            throw new ServerResponseException($e->getMessage(), $e->getCode(), $e);
         }
 
         return new JsonResponse($this->normalizeProductsList($products, $query));

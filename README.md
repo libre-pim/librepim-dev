@@ -46,24 +46,6 @@ docker build --target dev -t webkul/librepim-php-dev:master .
 
 ---
 
-## 🔍 Search Engine
-
-Librepim supports two search engines, selectable with the `SEARCH_ENGINE`
-environment variable:
-
-- `opensearch` — **OpenSearch 2.19** (default, recommended)
-- `elasticsearch` — **Elasticsearch 8**
-
-Set `SEARCH_ENGINE` and point `APP_INDEX_HOSTS` at a server of the matching engine,
-for example:
-
-```dotenv
-SEARCH_ENGINE=opensearch
-APP_INDEX_HOSTS=http://localhost:9200
-```
-
----
-
 ## 🔄 Upgrading
 
 Librepim follows Akeneo CE’s upgrade flow, making transitions simple and predictable.

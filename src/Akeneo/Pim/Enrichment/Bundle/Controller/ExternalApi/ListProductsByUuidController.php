@@ -15,8 +15,8 @@ use Akeneo\Tool\Component\Api\Exception\InvalidQueryException;
 use Akeneo\Tool\Component\Api\Pagination\PaginationTypes;
 use Akeneo\Tool\Component\Api\Pagination\PaginatorInterface;
 use Akeneo\UserManagement\Component\Model\UserInterface;
-use OpenSearch\Common\Exceptions\OpenSearchException;
-use OpenSearch\Common\Exceptions\ServerErrorResponseException;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,9 +86,9 @@ class ListProductsByUuidController
             $products = $this->listProductsByUuidQueryHandler->handle($query); // in try block as PQB is doing validation also
         } catch (InvalidQueryException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage(), $e);
-        } catch (OpenSearchException $e) {
-            if ($e->getCode() === 400) {
-                $message = json_decode($e->getMessage(), true);
+        } catch (ClientResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 400) {
+                $message = json_decode((string) $e->getResponse()->getBody(), true);
                 if (
                     null !== $message && isset($message['error']['root_cause'][0]['type'])
                     && 'illegal_argument_exception' === $message['error']['root_cause'][0]['type']
@@ -102,7 +102,7 @@ class ListProductsByUuidController
                 }
             }
 
-            throw new ServerErrorResponseException($e->getMessage(), $e->getCode(), $e);
+            throw new ServerResponseException($e->getMessage(), $e->getCode(), $e);
         }
 
         return new JsonResponse($this->normalizeProductsList($products, $query));

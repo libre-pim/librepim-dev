@@ -9,15 +9,16 @@ declare(strict_types=1);
 
 namespace Akeneo\Tool\Bundle\ElasticsearchBundle\Infrastructure\Client;
 
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
 use Monolog\Logger;
 use Webmozart\Assert\Assert;
 
 final class IndexUpdaterClient
 {
-    /** @var object OpenSearch\Client or ElasticsearchClientAdapter */
-    private $client;
+    private Client $client;
 
-    public function __construct(private Logger $logger, $clientBuilder, array $hosts)
+    public function __construct(private Logger $logger, ClientBuilder $clientBuilder, array $hosts)
     {
         $this->client = $clientBuilder->setHosts($hosts)->build();
     }
@@ -58,13 +59,13 @@ final class IndexUpdaterClient
                         ],
                     ]
                 ]
-            ])
+            ])->asArray()
         );
     }
 
     public function reindexAllDocuments(string $sourceAliasName, string $destinationAliasName)
     {
-        $this->logger->notice("First indexation into the new search index");
+        $this->logger->notice("First indexation into the new elasticsearch index");
         $reindexResponse = $this->client->reindex([
             'wait_for_completion' => true,
             'body' => [
@@ -76,7 +77,7 @@ final class IndexUpdaterClient
                     "version_type" => "external_gt",
                 ]
             ]
-        ]);
+        ])->asArray();
 
         $this->logger->notice('Indexation result', ['response' => json_encode($reindexResponse)]);
 
@@ -127,12 +128,12 @@ final class IndexUpdaterClient
         $this->client->indices()->create([
             'index' => $destinationIndexName,
             'body' => $sourceIndexConfiguration,
-        ]);
+        ])->asArray();
     }
 
     public function getIndexNameFromAlias(string $aliasName): string
     {
-        $aliasConfiguration = $this->client->indices()->get(['index' => $aliasName]);
+        $aliasConfiguration = $this->client->indices()->get(['index' => $aliasName])->asArray();
         $indexNames = array_keys($aliasConfiguration);
 
         if (count($indexNames) !== 1) {
@@ -148,7 +149,7 @@ final class IndexUpdaterClient
 
     public function getIndexConfiguration(string $aliasToReindex): array
     {
-        $aliasConfiguration = $this->client->indices()->get(['index' => $aliasToReindex]);
+        $aliasConfiguration = $this->client->indices()->get(['index' => $aliasToReindex])->asArray();
         $indexName = array_keys($aliasConfiguration)[0];
         $indexConfiguration = $aliasConfiguration[$indexName];
         unset($indexConfiguration['aliases']);
@@ -174,13 +175,13 @@ final class IndexUpdaterClient
                         ],
                     ],
                 ]
-            ])
+            ])->asArray()
         );
     }
 
     public function resetIndexSettings(string $destinationIndexName, string $sourceIndexName): void
     {
-        $sourceIndexSettingsResponse = $this->client->indices()->getSettings(['index' => $sourceIndexName]);
+        $sourceIndexSettingsResponse = $this->client->indices()->getSettings(['index' => $sourceIndexName])->asArray();
         $sourceIndexSettings = $sourceIndexSettingsResponse[$sourceIndexName]['settings']['index'];
         $this->assertResponseIsAcknowledged(
             $this->client->indices()->putSettings([
@@ -189,7 +190,7 @@ final class IndexUpdaterClient
                     'refresh_interval' => $sourceIndexSettings['refresh_interval'] ?? null,
                     'number_of_replicas' => $sourceIndexSettings['number_of_replicas'] ?? 1,
                 ]
-            ])
+            ])->asArray()
         );
 
         $this->client->indices()->refresh(['index' => $destinationIndexName]);
@@ -197,17 +198,17 @@ final class IndexUpdaterClient
 
     public function removeIndex(string $indexName): void
     {
-        $this->assertResponseIsAcknowledged($this->client->indices()->delete(['index' => $indexName]));
+        $this->assertResponseIsAcknowledged($this->client->indices()->delete(['index' => $indexName])->asArray());
     }
 
     public function isAnAlias(string $indexName): bool
     {
-        return (bool) $this->client->indices()->existsAlias(['name' => $indexName]);
+        return $this->client->indices()->existsAlias(['name' => $indexName])->asBool();
     }
 
     public function haveAlias(string $indexName): bool
     {
-        $aliasConfiguration = $this->client->indices()->get(['index' => $indexName]);
+        $aliasConfiguration = $this->client->indices()->get(['index' => $indexName])->asArray();
 
         return array_keys($aliasConfiguration)[0] === $indexName;
     }
@@ -232,7 +233,7 @@ final class IndexUpdaterClient
                         ],
                     ]
                 ]
-            ])
+            ])->asArray()
         );
     }
 

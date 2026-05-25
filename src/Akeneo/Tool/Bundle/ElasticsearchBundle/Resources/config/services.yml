@@ -1,23 +1,16 @@
 parameters:
+    akeneo_elasticsearch.client_builder.class: 'Elastic\Elasticsearch\ClientBuilder'
     akeneo_elasticsearch.registry.clients.class: 'Akeneo\Tool\Bundle\ElasticsearchBundle\ClientRegistry'
     env(APP_ELASTICSEARCH_TOTAL_FIELDS_LIMIT): '0'
     env(APP_ELASTICSEARCH_MAX_CHUNK_SIZE_CHARACTERS): '100000000'
-    # Selects the search engine: "opensearch" (default) or "elasticsearch".
-    env(SEARCH_ENGINE): 'opensearch'
 
 services:
     akeneo_elasticsearch.registry.clients:
         class: '%akeneo_elasticsearch.registry.clients.class%'
 
-    # The client builder is chosen at runtime from the SEARCH_ENGINE env var:
-    # a native OpenSearch builder, or an Elasticsearch-backed adapter.
-    # 'class' is only a compile-time hint for Symfony; the factory decides the
-    # actual instance returned.
     akeneo_elasticsearch.client_builder:
         public: true
-        class: OpenSearch\ClientBuilder
-        factory: ['Akeneo\Tool\Bundle\ElasticsearchBundle\SearchEngine\SearchEngineClientBuilderFactory', 'createBuilder']
-        arguments: ['%env(SEARCH_ENGINE)%']
+        class: '%akeneo_elasticsearch.client_builder.class%'
 
     akeneo_elasticsearch.install.install_subscriber:
         class: Akeneo\Tool\Bundle\ElasticsearchBundle\Infrastructure\Install\InstallSubscriber

@@ -8,8 +8,9 @@ use Akeneo\Tool\Bundle\ElasticsearchBundle\Domain\Model\ElasticsearchProjection;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Exception\IndexationException;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Exception\MissingIdentifierException;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
-use OpenSearch\Common\Exceptions\BadRequest400Exception;
-use OpenSearch\Common\Exceptions\Conflict409Exception;
+use Elastic\Elasticsearch\ClientInterface as NativeClient;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -25,13 +26,11 @@ class Client
     /** Number of split requests when retrying bulk index */
     private const NUMBER_OF_BATCHES_ON_RETRY = 2;
 
-    /** @var object OpenSearch\ClientBuilder or an Elasticsearch builder adapter */
-    private $builder;
+    private ClientBuilder $builder;
     private Loader $configurationLoader;
     private array $hosts;
     private string $indexName;
-    /** @var object OpenSearch\Client or ElasticsearchClientAdapter */
-    private $client;
+    private NativeClient $client;
     private string $idPrefix;
     private int $maxChunkSize;
     private int $maxExpectedIndexationLatencyInMicroseconds;
@@ -43,7 +42,7 @@ class Client
      * To learn more, please see {@link https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/_configuration.html}
      */
     public function __construct(
-        $builder,
+        ClientBuilder $builder,
         Loader $configurationLoader,
         array $hosts,
         string $indexName,
@@ -162,8 +161,8 @@ class Client
         $length = count($params['body']);
         try {
             $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $length);
-        } catch (BadRequest400Exception $e) {
-            if (400 === $e->getCode()) {
+        } catch (ClientResponseException $e) {
+            if (400 === $e->getResponse()->getStatusCode()) {
                 $chunkLength = intdiv($length, self::NUMBER_OF_BATCHES_ON_RETRY);
                 $chunkLength = $chunkLength % 2 == 0 ? $chunkLength : $chunkLength + 1;
 
@@ -361,12 +360,24 @@ class Client
      */
     public function hasIndex(): bool
     {
-        return (bool) $this->client->indices()->exists(['index' => $this->indexName]);
+        $response = $this->client->indices()->exists(['index' => $this->indexName]);
+
+        if ($response instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            return $response->asBool();
+        }
+
+        return (bool) $response;
     }
 
     public function hasIndexForAlias(): bool
     {
-        return (bool) $this->client->indices()->existsAlias(['name' => $this->indexName]);
+        $response = $this->client->indices()->existsAlias(['name' => $this->indexName]);
+
+        if ($response instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            return $response->asBool();
+        }
+
+        return (bool) $response;
     }
 
     /**
@@ -432,8 +443,8 @@ class Client
                     'body' => $body,
                 ]);
                 return;
-            } catch (Conflict409Exception $e) {
-                if (409 === $e->getCode()) {
+            } catch (ClientResponseException $e) {
+                if (409 === $e->getResponse()->getStatusCode()) {
                     $exception = $e;
                     usleep($this->maxExpectedIndexationLatencyInMicroseconds);
                     continue;
@@ -458,6 +469,10 @@ class Client
 
     private function toResultArray($response): array
     {
+        if ($response instanceof \Elastic\Elasticsearch\Response\Elasticsearch) {
+            return $response->asArray();
+        }
+
         return (array) $response;
     }
 }

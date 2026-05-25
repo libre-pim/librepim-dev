@@ -1,15 +1,3 @@
-# Unreleased
-
-## Platform / Component Updates
-
-- Added support for **OpenSearch 2.19** as the search engine, with a switchable
-  engine selector.
-  - New `SEARCH_ENGINE` environment variable: `opensearch` (default) or `elasticsearch`.
-  - Ships with both PHP clients (`opensearch-project/opensearch-php ~2.3.1` and
-    `elasticsearch/elasticsearch ^8.19`); an internal adapter lets the Elasticsearch
-    client present the same API as the OpenSearch client.
-  - `SEARCH_ENGINE` and `APP_INDEX_HOSTS` must point at the same engine.
-
 # 8.0.0 (2025-12-30)
 
 ## Platform / Component Updates

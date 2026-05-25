@@ -32,17 +32,17 @@ LibrePIM is a **community-maintained, long-term support (LTS) fork** of Akeneo P
 - **License**: MIT License
 - **Website**: https://www.doctrine-project.org/
 
-### OpenSearch
-- **Native Client**: OpenSearch PHP client (`opensearch-project/opensearch-php`)
-- **License**: Apache License 2.0
-- **Version**: 2.3.1 client / OpenSearch 2.19 server
-- **Website**: https://opensearch.org/
+### Elasticsearch
+- **Native Client**: Elasticsearch PHP client
+- **License**: Elastic License / SSPL (updated)
+- **Version**: 7.0+ (Elastic\Elasticsearch)
+- **Website**: https://www.elastic.co/
 
 ## LibrePIM Contributors
 
 LibrePIM extends the foundation of Akeneo CE with:
 
-- **Dependency Updates**: Modern package versions (Symfony 6+, Doctrine 3+, OpenSearch 2.19)
+- **Dependency Updates**: Modern package versions (Symfony 6+, Doctrine 3+, Elasticsearch 8+)
 - **Security Patches**: CVE fixes and security hardening
 - **Bug Fixes**: Community-reported issues and improvements
 - **Long-Term Support**: Maintenance beyond Akeneo CE's release cycle

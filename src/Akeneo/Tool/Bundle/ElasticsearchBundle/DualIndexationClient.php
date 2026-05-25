@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\Tool\Bundle\ElasticsearchBundle;
 
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\Loader;
+use Elastic\Elasticsearch\ClientBuilder;
 
 /**
  * This class extends behavior of "write" methods in order to index on 2 both aliases in same time:
@@ -20,7 +21,7 @@ final class DualIndexationClient extends Client
     private Client $dualClient;
 
     public function __construct(
-        $builder,
+        ClientBuilder $builder,
         Loader $configurationLoader,
         array $hosts,
         string $aliasName,

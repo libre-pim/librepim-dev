@@ -7,7 +7,7 @@ namespace Akeneo\Tool\Bundle\ElasticsearchBundle\Command;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\Client;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\ClientRegistry;
 use Akeneo\Tool\Bundle\ElasticsearchBundle\IndexConfiguration\UpdateIndexMapping;
-use Akeneo\Tool\Bundle\ElasticsearchBundle\SearchEngine\SearchEngineClientBuilderFactory;
+use Elastic\Elasticsearch\ClientBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,7 +33,7 @@ class UpdateMappingIndexCommand extends Command
     /** @var array */
     private $hosts;
 
-    public function __construct(ClientRegistry $clientRegistry, $hosts, private string $searchEngine = 'opensearch')
+    public function __construct(ClientRegistry $clientRegistry, $hosts)
     {
         $this->esClientsRegistry = $clientRegistry;
         $this->hosts = is_string($hosts) ? [$hosts] : $hosts;
@@ -95,7 +95,7 @@ TXT;
 
     private function buildNativeClient(Client $client): array
     {
-        $clientBuilder = SearchEngineClientBuilderFactory::createBuilder($this->searchEngine);
+        $clientBuilder = new ClientBuilder();
         $clientBuilder->setHosts($this->hosts);
         $nativeClient = $clientBuilder->build();
 

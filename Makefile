@@ -1,24 +1,28 @@
-#
-# This file is a template Makefile. Some targets are presented here as examples.
-# Feel free to customize it to your needs!
-#
-CMD_ON_PROJECT = docker compose run -u www-data:www-data --rm php
-PHP_RUN = $(CMD_ON_PROJECT) php
-YARN_RUN = docker compose run -u node --rm -e YARN_REGISTRY -e PUPPETEER_SKIP_CHROMIUM_DOWNLOAD node yarn
+DOCKER_COMPOSE = docker compose
+NODE_RUN ?= $(DOCKER_COMPOSE) run -u node --rm -e YARN_REGISTRY -e PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 -e PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome node
+YARN_RUN ?= $(NODE_RUN) yarn
+PHP_RUN ?= $(DOCKER_COMPOSE) run --rm php php
+PHP_EXEC ?= $(DOCKER_COMPOSE) exec -u www-data httpd php
 
-ifdef NO_DOCKER
-  CMD_ON_PROJECT =
-  YARN_RUN = yarnpkg
-  PHP_RUN = php
-endif
+.DEFAULT_GOAL := help
 
-.DEFAULT_GOAL := dev
+.PHONY: help
+help:
+	@echo ""
+	@echo "Caution: those targets are optimized for docker 19+"
+	@echo ""
+	@echo "Please add your custom Makefile in the directory "make-file". They will be automatically loaded!"
+	@echo ""
 
-yarn.lock: package.json
-	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 $(YARN_RUN) install
+## Include all *.mk files
+include make-file/*.mk
 
-node_modules: yarn.lock
-	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 $(YARN_RUN) install
+##
+## Front
+##
+.PHONY: node_modules
+node_modules:
+	$(YARN_RUN) install --frozen-lockfile
 
 .PHONY: javascript-extensions
 javascript-extensions:
@@ -26,30 +30,69 @@ javascript-extensions:
 
 .PHONY: front-packages
 front-packages:
-	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 $(YARN_RUN) packages:build
+	$(YARN_RUN) packages:build
+
+.PHONY: dsm
+dsm:
+	$(YARN_RUN) dsm:build
 
 .PHONY: assets
 assets:
-	$(CMD_ON_PROJECT) rm -rf public/bundles public/js
-	$(PHP_RUN) bin/console pim:installer:assets --symlink --clean
+	$(DOCKER_COMPOSE) run --rm php rm -rf public/bundles public/js
+	$(PHP_RUN) bin/console --env=prod pim:installer:assets --symlink --clean
 
 .PHONY: css
 css:
-	$(CMD_ON_PROJECT) rm -rf public/css
+	$(DOCKER_COMPOSE) run --rm php rm -rf public/css
 	$(YARN_RUN) run less
 
 .PHONY: javascript-prod
-javascript-prod:
-	$(CMD_ON_PROJECT) rm -rf public/dist
+javascript-prod: javascript-extensions
+	$(NODE_RUN) rm -rf public/dist
 	$(YARN_RUN) run webpack
 
 .PHONY: javascript-dev
-javascript-dev:
-	$(CMD_ON_PROJECT) rm -rf public/dist
+javascript-dev: javascript-extensions
+	$(NODE_RUN) rm -rf public/dist
 	$(YARN_RUN) run webpack-dev
+
+.PHONY: javascript-dev-strict
+javascript-dev-strict: javascript-extensions
+	$(NODE_RUN) rm -rf public/dist
+	$(YARN_RUN) run webpack-dev-strict
+
+.PHONY: javascript-test
+javascript-test: javascript-extensions
+	$(NODE_RUN) rm -rf public/dist
+	$(YARN_RUN) run webpack-test
 
 .PHONY: front
 front: assets css front-packages javascript-dev
+
+##
+## Back
+##
+
+.PHONY: fix-cs-back
+fix-cs-back:
+	$(PHP_RUN) vendor/bin/php-cs-fixer fix --config=.php_cs.php
+
+var/cache/dev:
+	APP_ENV=dev make cache
+
+.PHONY: cache
+cache:
+	$(DOCKER_COMPOSE) run --rm php rm -rf var/cache && $(PHP_RUN) bin/console cache:warmup
+
+.PHONY: vendor
+vendor:
+    # check if composer.json is out of sync with composer.lock
+	$(PHP_RUN) /usr/local/bin/composer validate --no-check-all
+	$(PHP_RUN) -d memory_limit=4G /usr/local/bin/composer install
+
+.PHONY: check-requirements
+check-requirements:
+	$(PHP_RUN) bin/console pim:installer:check-requirements
 
 .PHONY: database
 database:
@@ -57,64 +100,80 @@ database:
 	$(PHP_RUN) bin/console doctrine:database:create --if-not-exists
 	$(PHP_RUN) bin/console pim:installer:db ${O}
 
-.PHONY: cache
-cache:
-	$(CMD_ON_PROJECT) rm -rf var/cache && $(PHP_RUN) bin/console cache:warmup
+.PHONY: start-job-worker
+start-job-worker:
+	$(PHP_RUN) bin/console messenger:consume ui_job import_export_job data_maintenance_job ${O}
 
-composer.lock: composer.json
-	$(PHP_RUN) -d memory_limit=4G /usr/local/bin/composer update
+.PHONY: stop-workers
+stop-workers:
+	$(PHP_RUN) bin/console messenger:stop-workers
 
-vendor: composer.lock
-	$(PHP_RUN) -d memory_limit=4G /usr/local/bin/composer install
+##
+## PIM install
+##
 
 .PHONY: dependencies
 dependencies: vendor node_modules
 
-.PHONY: dev
-dev:
-	$(MAKE) dependencies
-	$(MAKE) pim-dev
+# Those targets ease the pim installation depending the Symfony environnement: behat, test, dev, prod.
+#
+# For instance :
+# If you need to debug a legacy behat please run `make pim-behat` before debugging
+# If you need to debug a phpunit please run `make pim-test` before debugging
+# If you want to use the PIM with the debug mode enabled please run `make pim-dev` to initialize the PIM
+#
+# Caution:
+# - Make sure your back and front dependencies are up to date (make dependencies).
+# - Make sure the docker php is built (make php-image-dev).
 
-.PHONY: prod
-prod:
-	$(MAKE) dependencies
-	$(MAKE) pim-prod
-
-.PHONY: pim-prod
-pim-prod:
-ifndef NO_DOCKER
-	APP_ENV=prod $(MAKE) up
-	docker/wait_docker_up.sh
-endif
-	$(MAKE) cache
+.PHONY: pim-behat
+pim-behat:
+	APP_ENV=behat $(MAKE) up
+	APP_ENV=behat $(MAKE) cache
 	$(MAKE) assets
-	$(MAKE) front-packages
-	$(MAKE) javascript-prod
 	$(MAKE) css
-	$(MAKE) javascript-extensions
-	APP_ENV=prod $(MAKE) database O="--catalog src/Akeneo/Platform/Installer/back/src/Infrastructure/Symfony/Resources/fixtures/minimal"
+	$(MAKE) front-packages
+	$(MAKE) javascript-dev
+	docker/wait_docker_up.sh
+	APP_ENV=behat $(MAKE) database
+	APP_ENV=behat $(PHP_RUN) bin/console pim:user:create --admin -n -- admin admin test@example.com John Doe en_US
+
+.PHONY: pim-test
+pim-test:
+	APP_ENV=test $(MAKE) up
+	APP_ENV=test $(MAKE) cache
+	docker/wait_docker_up.sh
+	APP_ENV=test $(MAKE) database
 
 .PHONY: pim-dev
 pim-dev:
-ifndef NO_DOCKER
 	APP_ENV=dev $(MAKE) up
-	docker/wait_docker_up.sh
-endif
-	$(MAKE) cache
+	APP_ENV=dev $(MAKE) cache
 	$(MAKE) assets
+	$(MAKE) css
 	$(MAKE) front-packages
 	$(MAKE) javascript-dev
+	docker/wait_docker_up.sh
+	APP_ENV=dev O="--catalog src/Akeneo/Platform/Installer/back/src/Infrastructure/Symfony/Resources/fixtures/icecat_demo_dev" $(MAKE) database
+
+.PHONY: pim-prod
+pim-prod:
+	APP_ENV=prod $(MAKE) up
+	APP_ENV=prod $(MAKE) cache
+	$(MAKE) assets
 	$(MAKE) css
-	$(MAKE) javascript-extensions
-	APP_ENV=dev $(MAKE) database O="--catalog src/Akeneo/Platform/Installer/back/src/Infrastructure/Symfony/Resources/fixtures/icecat_demo_dev"
+	$(MAKE) front-packages
+	$(MAKE) javascript-prod
+	docker/wait_docker_up.sh
+	APP_ENV=prod $(MAKE) database
 
 .PHONY: up
 up:
-	docker compose up -d --remove-orphans
+	$(DOCKER_COMPOSE) up -d --remove-orphans ${C}
 
 .PHONY: down
 down:
-	docker compose down -v
+	$(DOCKER_COMPOSE) down -v
 
 .PHONY: upgrade-front
 upgrade-front:

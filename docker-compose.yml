@@ -85,12 +85,11 @@ services:
       - 'pim'
 
   elasticsearch:
-    image: 'opensearchproject/opensearch:2.19.1'
+    image: 'elastic/elasticsearch:8.4.2'
     environment:
-      OPENSEARCH_JAVA_OPTS: '${ES_JAVA_OPTS:--Xms1g -Xmx1g}'
+      ES_JAVA_OPTS: '${ES_JAVA_OPTS:--Xms1g -Xmx1g}'
       discovery.type: 'single-node'
-      DISABLE_SECURITY_PLUGIN: 'true'
-      bootstrap.memory_lock: 'false'
+      xpack.security.enabled: 'false'
       indices.id_field_data.enabled: 'true'
     ports:
       - '${DOCKER_PORT_ELASTICSEARCH:-9210}:9200'

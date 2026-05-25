@@ -141,6 +141,9 @@
     "dvdoug/behat-code-coverage": {
         "version": "v5.2.1"
     },
+    "elasticsearch/elasticsearch": {
+        "version": "v7.2.2"
+    },
     "evenement/evenement": {
         "version": "v3.0.1"
     },

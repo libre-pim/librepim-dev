@@ -4,7 +4,6 @@ services:
             - '@akeneo_elasticsearch.registry.clients'
             - '@akeneo_elasticsearch.client_builder'
             - ['%index_hosts%']
-            - '%env(default::string:SEARCH_ENGINE)%'
         tags:
             - { name: console.command }
 
