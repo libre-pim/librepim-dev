@@ -129,10 +129,13 @@ class AssociationFieldAdder extends AbstractFieldAdder
                     $productIdentifier
                 );
             }
-            $mergedAssoc = $entity->getAllAssociations()->filter(
-                static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
-            )->first();
-            $alreadyPresent = $mergedAssoc && $mergedAssoc->hasProduct($associatedProduct);
+            $alreadyPresent = false;
+            if ($associationType->isTwoWay()) {
+                $mergedAssoc = $entity->getAllAssociations()->filter(
+                    static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
+                )->first();
+                $alreadyPresent = $mergedAssoc && $mergedAssoc->hasProduct($associatedProduct);
+            }
 
             $entity->addAssociatedProduct($associatedProduct, $associationType->getCode());
             if ($associationType->isTwoWay() && !$alreadyPresent) {
@@ -165,10 +168,13 @@ class AssociationFieldAdder extends AbstractFieldAdder
                     $productUuid
                 );
             }
-            $mergedAssoc = $entity->getAllAssociations()->filter(
-                static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
-            )->first();
-            $alreadyPresent = $mergedAssoc && $mergedAssoc->hasProduct($associatedProduct);
+            $alreadyPresent = false;
+            if ($associationType->isTwoWay()) {
+                $mergedAssoc = $entity->getAllAssociations()->filter(
+                    static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
+                )->first();
+                $alreadyPresent = $mergedAssoc && $mergedAssoc->hasProduct($associatedProduct);
+            }
 
             $entity->addAssociatedProduct($associatedProduct, $associationType->getCode());
             if ($associationType->isTwoWay() && !$alreadyPresent) {
@@ -204,10 +210,13 @@ class AssociationFieldAdder extends AbstractFieldAdder
                     $productModelIdentifier
                 );
             }
-            $mergedAssoc = $entity->getAllAssociations()->filter(
-                static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
-            )->first();
-            $alreadyPresent = $mergedAssoc && $mergedAssoc->getProductModels()->contains($associatedProductModel);
+            $alreadyPresent = false;
+            if ($associationType->isTwoWay()) {
+                $mergedAssoc = $entity->getAllAssociations()->filter(
+                    static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
+                )->first();
+                $alreadyPresent = $mergedAssoc && $mergedAssoc->getProductModels()->contains($associatedProductModel);
+            }
 
             $entity->addAssociatedProductModel($associatedProductModel, $associationType->getCode());
             if ($associationType->isTwoWay() && !$alreadyPresent) {

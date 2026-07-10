@@ -162,14 +162,17 @@ class AssociationFieldSetter extends AbstractFieldSetter
         ProductInterface $associatedProduct,
         AssociationTypeInterface $associationType
     ): void {
-        // Check merged associations (own + inherited) BEFORE the add.
+        // For two-way associations, check merged associations (own + inherited) BEFORE the add.
         // AbstractProduct::addAssociatedProduct silently no-ops when the product is already
         // in merged associations, but createInversedAssociation must also be skipped in that
         // case to avoid spuriously adding the variant to the associated entity's association.
-        $mergedAssociation = $owner->getAllAssociations()->filter(
-            static fn (AssociationInterface $assoc): bool => $assoc->getAssociationType()->getCode() === $associationType->getCode()
-        )->first();
-        $alreadyInMergedAssociations = $mergedAssociation && $mergedAssociation->hasProduct($associatedProduct);
+        $alreadyInMergedAssociations = false;
+        if ($associationType->isTwoWay()) {
+            $mergedAssociation = $owner->getAllAssociations()->filter(
+                static fn (AssociationInterface $assoc): bool => $assoc->getAssociationType()->getCode() === $associationType->getCode()
+            )->first();
+            $alreadyInMergedAssociations = $mergedAssociation && $mergedAssociation->hasProduct($associatedProduct);
+        }
 
         $owner->addAssociatedProduct($associatedProduct, $associationType->getCode());
 
@@ -235,14 +238,17 @@ class AssociationFieldSetter extends AbstractFieldSetter
         ProductModelInterface $associatedProductModel,
         AssociationTypeInterface $associationType
     ): void {
-        // Check merged associations (own + inherited) BEFORE the add.
+        // For two-way associations, check merged associations (own + inherited) BEFORE the add.
         // AbstractProduct::addAssociatedProductModel silently no-ops when the model is already
         // in merged associations, but createInversedAssociation must also be skipped in that
         // case to avoid spuriously adding the variant to the associated product model's association.
-        $mergedAssociation = $owner->getAllAssociations()->filter(
-            static fn (AssociationInterface $assoc): bool => $assoc->getAssociationType()->getCode() === $associationType->getCode()
-        )->first();
-        $alreadyInMergedAssociations = $mergedAssociation && $mergedAssociation->getProductModels()->contains($associatedProductModel);
+        $alreadyInMergedAssociations = false;
+        if ($associationType->isTwoWay()) {
+            $mergedAssociation = $owner->getAllAssociations()->filter(
+                static fn (AssociationInterface $assoc): bool => $assoc->getAssociationType()->getCode() === $associationType->getCode()
+            )->first();
+            $alreadyInMergedAssociations = $mergedAssociation && $mergedAssociation->getProductModels()->contains($associatedProductModel);
+        }
 
         $owner->addAssociatedProductModel($associatedProductModel, $associationType->getCode());
 

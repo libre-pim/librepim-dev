@@ -16,6 +16,7 @@ use Akeneo\Pim\Structure\Component\Repository\AssociationTypeRepositoryInterface
 use Akeneo\Tool\Component\StorageUtils\Exception\InvalidPropertyException;
 use Akeneo\Tool\Component\StorageUtils\Exception\InvalidPropertyTypeException;
 use Akeneo\Tool\Component\StorageUtils\Repository\IdentifiableObjectRepositoryInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use PhpSpec\ObjectBehavior;
 
 class AssociationFieldAdderSpec extends ObjectBehavior
@@ -451,6 +452,8 @@ class AssociationFieldAdderSpec extends ObjectBehavior
         $productRepository->findOneByIdentifier('assocProduct')->willReturn($assocProduct);
         $productModelRepository->findOneByIdentifier('assocProductModel')->willReturn($assocProductModel);
 
+        $product->getAllAssociations()->willReturn(new ArrayCollection());
+
         $missingAssociationAdder->addMissingAssociations($product)->shouldBeCalled();
         $product->addAssociatedProduct($assocProduct, 'TWOWAY')->shouldBeCalled();
         $product->addAssociatedProductModel($assocProductModel, 'TWOWAY')->shouldBeCalled();
@@ -488,6 +491,8 @@ class AssociationFieldAdderSpec extends ObjectBehavior
 
         $productRepository->findOneByIdentifier('assocProduct')->willReturn($assocProduct);
         $productModelRepository->findOneByIdentifier('assocProductModel')->willReturn($assocProductModel);
+
+        $productModel->getAllAssociations()->willReturn(new ArrayCollection());
 
         $missingAssociationAdder->addMissingAssociations($productModel)->shouldBeCalled();
         $productModel->addAssociatedProduct($assocProduct, 'TWOWAY')->shouldBeCalled();

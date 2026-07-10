@@ -265,6 +265,14 @@ class GetCategorySqlIntegration extends CategoryTestCase
         }
     }
 
+    public function testGetCategoryUpdatedDateIsParsedAsDateTimeImmutable(): void
+    {
+        $category = $this->get(GetCategoryInterface::class)->byCode($this->category->getCode());
+
+        $this->assertInstanceOf(Category::class, $category);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $category->getUpdated());
+    }
+
     private function getLastCategoryId(): int
     {
         return (int) $this->get('database_connection')->fetchOne('SELECT MAX(id) FROM pim_catalog_category');
