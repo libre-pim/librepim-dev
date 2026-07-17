@@ -87,6 +87,7 @@ pim_enrich:
     product:
       index: Lista tuotteista
       create: Luo tuote
+      view_attributes: Näytä tuotteen attribuutit
       edit_attributes: Muokkaa tuotteen attribuutteja
       remove: Poista tuote
       add_attribute: Lisää attribuutti tuotteelle
@@ -104,6 +105,7 @@ pim_enrich:
       convert_variant_to_simple: Muunna variantti yksittäituotteeksi
     product_model:
       create: Luo tuotemalli
+      view_attributes: Näytä tuotemallin attribuutit
       edit_attributes: Muokkaa tuotemallin attribuutteja
       categories_view: Tarkastele tuotemallin kategorioita
       history: Näytä tuotemallin muutoshistoria

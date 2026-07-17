@@ -1,5 +1,9 @@
 # Unreleased
 
+## Features
+
+* Added a **View attributes** ACL for products and product models (`pim_enrich_product_view_attributes`, `pim_enrich_product_model_view_attributes`) enabling read-only attribute access: when a role is granted **View attributes** but not **Edit attributes**, the product / product-model edit form shows the Attributes tab with every field rendered read-only (disabled) and the Save button hidden. Attributes-tab visibility now keys off the new view ACL, while editability and saving continue to key off the existing `*_edit_attributes` ACL (backend write endpoints unchanged). Adds the `pim/product-edit-form/attributes/acl-read-only-form` form extension (flips each field to view mode via the existing field edit/view-mode mechanism) and migration `Version_8_0_20260717120000_add_product_view_attributes_acl`, which copies each role's effective edit-attributes grant onto the new view ACL so no role loses attribute access on upgrade (fresh installs inherit it through the default role grant). Enhancement for [akeneo/pim-community-dev#19842](https://github.com/akeneo/pim-community-dev/issues/19842).
+
 ## Bug fixes
 
 * Fix two-way association deletion not reindexing associated product/model in Elasticsearch — added `PRE_REMOVE`/`POST_REMOVE` handlers to `PersistTwoWayAssociationSubscriber`

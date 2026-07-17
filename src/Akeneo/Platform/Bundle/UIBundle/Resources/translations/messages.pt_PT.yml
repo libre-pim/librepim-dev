@@ -73,6 +73,7 @@ pim_enrich:
     product:
       index: Listar produtos
       create: Criar um produto
+      view_attributes: Ver atributos de um produto
       edit_attributes: Editar atributos de um produto
       remove: Remover um produto
       add_attribute: Adicionar um atributo a um produto
@@ -96,6 +97,7 @@ pim_enrich:
       index: Listar famílias
       create: Criar famílias
       edit_properties: Editar propriedades das famílias
+      view_attributes: Ver atributos de um modelo de produto
       edit_attributes: Editar atributos de famílias
       remove: Remover famílias
       history: Ver histórico de famílias

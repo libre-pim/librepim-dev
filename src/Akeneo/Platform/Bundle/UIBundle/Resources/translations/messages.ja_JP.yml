@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: 商品を一覧表示
       create: 商品を作成
+      view_attributes: 商品の属性を表示
       edit_attributes: 商品の属性を編集
       remove: 商品を削除
       add_attribute: 商品に属性を追加
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: バリエーション商品をシンプル商品に変換
     product_model:
       create: 商品モデルを作成
+      view_attributes: 商品モデルの属性を表示
       edit_attributes: 商品モデルの属性を編集
       categories_view: 商品モデルのカテゴリを相談
       history: 商品モデルの履歴を表示

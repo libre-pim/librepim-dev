@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: Przeglądanie produktów
       create: Tworzenie produktu
+      view_attributes: Wyświetl atrybuty produktu
       edit_attributes: Edycja atrybutów produktu
       remove: Usuwanie produktu
       add_attribute: Dodawanie atrybutu do produktu
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: Konwertuj produkt z wariantami na produkt prosty
     product_model:
       create: Utwórz model produktu
+      view_attributes: Wyświetl atrybuty modelu produktu
       edit_attributes: Edytuj atrybutu modelu produktu
       categories_view: Sprawdź kategorie modelu produktu
       history: Przeglądaj historię modelu produktu

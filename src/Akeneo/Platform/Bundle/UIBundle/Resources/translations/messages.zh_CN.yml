@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: 列出产品
       create: 创建产品
+      view_attributes: 查看产品的属性
       edit_attributes: 编辑产品属性
       remove: 移除产品
       add_attribute: 将属性添加到产品
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: 将变型产品转换为简单产品
     product_model:
       create: 创建产品模型
+      view_attributes: 查看产品模型的属性
       edit_attributes: 编辑产品模型的属性
       categories_view: 查阅产品模型的类别
       history: 查看产品模型的历史记录

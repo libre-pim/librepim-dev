@@ -72,6 +72,7 @@ pim_enrich:
     product:
       index: Liste over produkter
       create: Opret et produkt
+      view_attributes: Se attributter for et produkt
       edit_attributes: Rediger attributterne for et produkt
       remove: Fjern et produkt
       add_attribute: Tilføj en attribut til et produkt
@@ -88,6 +89,7 @@ pim_enrich:
       history: Se produkt historik
     product_model:
       create: Oprette en produktmodel
+      view_attributes: Se attributter for en produktmodel
       edit_attributes: Rediger attributterne for en produktmodel
       categories_view: Konsultere kategorierne af en produktmodel
       history: Se produkt model historik

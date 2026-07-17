@@ -81,6 +81,7 @@ pim_enrich:
     product:
       index: Lista produkter
       create: Skapa en produkt
+      view_attributes: Visa attribut för en produkt
       edit_attributes: Redigera attribut för produkten
       remove: Ta bort en produkt
       add_attribute: Lägga till ett attribut till en produkt
@@ -113,6 +114,7 @@ pim_enrich:
       index: Visa familjer
       create: Skapa en familj
       edit_properties: Redigera egenskaper för en familj
+      view_attributes: Visa attribut för en produktmodell
       edit_attributes: Redigera attribut för en familj
       remove: Ta bort en familj
       history: Visa familjehistorik

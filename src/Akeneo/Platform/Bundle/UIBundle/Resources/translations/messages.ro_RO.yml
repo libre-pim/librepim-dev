@@ -79,6 +79,7 @@ pim_enrich:
     product:
       index: Listează produsele
       create: Creează un produs
+      view_attributes: Vizualizează atributele unui produs
       edit_attributes: Modifică atributele unui produs
       remove: Șterge un produs
       add_attribute: Adaugă un atribut unui produs
@@ -94,6 +95,7 @@ pim_enrich:
       history: Vezi istoricul produsului
     product_model:
       create: Creati un model de produs
+      view_attributes: Vizualizează atributele unui model de produs
       edit_attributes: Editaţi atributele unui model de produs
       categories_view: Consultă categoriile unui model de produs
       history: Vezi istoricul modelului de produs

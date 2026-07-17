@@ -80,6 +80,7 @@ pim_enrich:
     product:
       index: Ürünleri listele
       create: Ürün oluştur
+      view_attributes: Bir ürünün özniteliklerini görüntüle
       edit_attributes: Bir ürünün özelliklerini düzenleyin
       remove: Bir ürünü kaldır
       add_attribute: Ürüne bir Özellik Ekle
@@ -95,6 +96,7 @@ pim_enrich:
       history: Ürün geçmişini görüntüle
     product_model:
       create: Ürün modeli oluştur
+      view_attributes: Bir ürün modelinin özniteliklerini görüntüle
       edit_attributes: Ürün modelinin özelliklerini düzenle
       categories_view: Bir ürün modelinin kategorilerine bakınız
       history: Ürün modeli geçmişi görüntüle

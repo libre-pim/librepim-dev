@@ -174,13 +174,20 @@ extensions:
         module: pim/product-edit-form/attributes
         parent: pim-product-model-edit-form-column-tabs
         targetZone: container
-        aclResourceId: pim_enrich_product_model_edit_attributes
+        aclResourceId: pim_enrich_product_model_view_attributes
         position: 90
         config:
             removeAttributeRoute: pim_enrich_product_remove_attribute_rest
             removeAttributeACL: pim_enrich_product_remove_attribute
             tabTitle: pim_enrich.entity.attribute.plural_label
             deletionFailed: pim_enrich.entity.attribute.flash.delete.fail
+
+    pim-product-model-edit-form-acl-read-only:
+        module: pim/product-edit-form/attributes/acl-read-only-form
+        parent: pim-product-model-edit-form-attributes
+        position: 100
+        config:
+            editAclResourceId: pim_enrich_product_model_edit_attributes
 
     pim-product-model-edit-form-categories:
         module: pim/product-edit-form/categories

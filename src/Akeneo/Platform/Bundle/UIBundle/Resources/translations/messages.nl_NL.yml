@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: Producten weergeven
       create: Product aanmaken
+      view_attributes: Attributen van een product bekijken
       edit_attributes: Wijzig attributen van een product
       remove: Product verwijderen
       add_attribute: Voeg een attribuut toe aan een product
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: Converteer een variant product naar een eenvoudig product
     product_model:
       create: Een product model aanmaken
+      view_attributes: Attributen van een productmodel bekijken
       edit_attributes: Wijzig attributen van een productmodel
       categories_view: Raadpleeg de categorieën van een productmodel
       history: Bekijk productmodel-geschiedenis
