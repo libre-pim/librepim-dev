@@ -2,7 +2,7 @@
 
 ## Features
 
-* Added a **View attributes** ACL for products and product models (`pim_enrich_product_view_attributes`, `pim_enrich_product_model_view_attributes`) enabling read-only attribute access: when a role is granted **View attributes** but not **Edit attributes**, the product / product-model edit form shows the Attributes tab with every field rendered read-only (disabled) and the Save button hidden. Attributes-tab visibility now keys off the new view ACL, while editability and saving continue to key off the existing `*_edit_attributes` ACL (backend write endpoints unchanged). Adds the `pim/product-edit-form/attributes/acl-read-only-form` form extension (flips each field to view mode via the existing field edit/view-mode mechanism) and migration `Version_8_0_20260717120000_add_product_view_attributes_acl`, which copies each role's effective edit-attributes grant onto the new view ACL so no role loses attribute access on upgrade (fresh installs inherit it through the default role grant). Enhancement for [akeneo/pim-community-dev#19842](https://github.com/akeneo/pim-community-dev/issues/19842).
+* Added a **View attributes** ACL for products and product models: a role granted View attributes but not Edit attributes sees the Attributes tab as read-only, with fields disabled and the Save button hidden (#19842)
 
 ## Bug fixes
 
@@ -10,6 +10,10 @@
 * Fix saving a variant product in a two-way associated product model spuriously creating an extra association on the associated entity — `AssociationFieldSetter` and `AssociationFieldAdder` now pre-check merged (own + inherited) associations before calling `createInversedAssociation()`
 * Fix DQI Dashboard category widget showing blank scores for uppercase/mixed-case category codes — `GetAverageRanksQuery::fetchByCodes()` now preserves original-case request code as response key while using lowercase only for internal DB lookup
 * Fix DQI Dashboard family widget showing blank labels for uppercase family codes — `FindFamiliesController` now returns original-case family code; `FamilyWidget` comparison updated to case-insensitive
+* Fix product grid 500 error when a numeric attribute code is used as a column (#20382)
+* Fix 500 error on the create user group page in debug mode (#20401)
+* Fix invalid Doctrine mapping between Product and Group (#18888)
+* Fix version "updated" date not refreshing for overridden Product classes (#18899)
 
 ## CI / Infrastructure
 
