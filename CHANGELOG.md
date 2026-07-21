@@ -6,7 +6,7 @@
 
 ## Bug fixes
 
-* Fix two-way association deletion not reindexing associated product/model in Elasticsearch — added `PRE_REMOVE`/`POST_REMOVE` handlers to `PersistTwoWayAssociationSubscriber`
+* Fix two-way associated products and models not being reindexed in the search engine when a product is deleted
 * Fix saving a variant product in a two-way associated product model spuriously creating an extra association on the associated entity — `AssociationFieldSetter` and `AssociationFieldAdder` now pre-check merged (own + inherited) associations before calling `createInversedAssociation()`
 * Fix DQI Dashboard category widget showing blank scores for uppercase/mixed-case category codes — `GetAverageRanksQuery::fetchByCodes()` now preserves original-case request code as response key while using lowercase only for internal DB lookup
 * Fix DQI Dashboard family widget showing blank labels for uppercase family codes — `FindFamiliesController` now returns original-case family code; `FamilyWidget` comparison updated to case-insensitive
@@ -14,6 +14,8 @@
 * Fix 500 error on the create user group page in debug mode (#20401)
 * Fix invalid Doctrine mapping between Product and Group (#18888)
 * Fix version "updated" date not refreshing for overridden Product classes (#18899)
+* Fix the associated product not being reindexed in the search engine when it is removed from a two-way association (#20547)
+* Fix a PHP warning logged when reading the structure version before any structure change has been recorded (#20332)
 
 ## CI / Infrastructure
 
