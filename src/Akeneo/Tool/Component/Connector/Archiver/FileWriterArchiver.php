@@ -103,16 +103,9 @@ class FileWriterArchiver extends AbstractFilesystemArchiver
             );
 
             try {
-                if ($fileToArchive->isLocalFile()) {
-                    $stream = @fopen($fileToArchive->sourceKey(), 'r');
-                    if (false === $stream) {
-                        throw new \RuntimeException(sprintf('Unable to open local file "%s" for reading', $fileToArchive->sourceKey()));
-                    }
-                } else {
-                    $stream = $this->filesystemProvider->getFilesystem($fileToArchive->sourceStorage())->readStream(
-                        $fileToArchive->sourceKey(),
-                    );
-                }
+                $stream = $this->filesystemProvider->getFilesystem($fileToArchive->sourceStorage())->readStream(
+                    $fileToArchive->sourceKey(),
+                );
 
                 $this->archivistFilesystem->writeStream($archivedFilePath, $stream);
 

@@ -23,7 +23,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use GuzzleHttp\Psr7\Response;
 use PhpSpec\ObjectBehavior;
 use PHPUnit\Framework\Assert;
@@ -337,7 +338,7 @@ class GuzzleWebhookClientSpec extends ObjectBehavior
         Assert::assertCount(1, $container);
     }
 
-    private function findRequest(array $container, string $url): ?Request
+    private function findRequest(array $container, string $url): ?GuzzleRequest
     {
         foreach ($container as $transaction) {
             if ($url === (string)$transaction['request']->getUri()) {

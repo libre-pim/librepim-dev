@@ -34,17 +34,15 @@ class UTCDateTimeImmutableType extends DateTimeImmutableType
             return $value;
         }
 
-        $converted = \DateTimeImmutable::createFromFormat(
-            $platform->getDateTimeFormatString(),
-            $value,
-            self::getUtc()
-        );
+        $format = $platform->getDateTimeFormatString($value);
+
+        $converted = \DateTimeImmutable::createFromFormat($format, $value, self::getUtc());
 
         if (!$converted) {
             throw ConversionException::conversionFailedFormat(
                 $value,
                 Types::DATETIME_IMMUTABLE,
-                $platform->getDateTimeFormatString()
+                $format
             );
         }
 

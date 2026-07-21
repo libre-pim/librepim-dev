@@ -60,7 +60,7 @@ class TimestampableSubscriber implements EventSubscriber
 
         $related = $this->em->find(
             $version->getResourceName(),
-            $version->getResourceName() === Product::class ? $version->getResourceUuid() : $version->getResourceId()
+            is_a($version->getResourceName(), Product::class, true) ? $version->getResourceUuid() : $version->getResourceId()
         );
 
         if (null === $related) {

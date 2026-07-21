@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: 제품 나열
       create: 제품 만들기
+      view_attributes: 제품 속성 보기
       edit_attributes: 제품 특성 편집
       remove: 제품 제거
       add_attribute: 제품에 특성 추가
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: 변형 제품을 단일 제품으로 변환
     product_model:
       create: 제품 모델 만들기
+      view_attributes: 제품 모델 속성 보기
       edit_attributes: 제품 모델 특성 편집
       categories_view: 제품 모델 카테고리 상담
       history: 제품 모델 기록 보기

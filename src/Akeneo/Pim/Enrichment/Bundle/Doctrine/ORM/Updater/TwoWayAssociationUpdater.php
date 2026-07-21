@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\Pim\Enrichment\Bundle\Doctrine\ORM\Updater;
 
 use Akeneo\Pim\Enrichment\Component\Product\Association\MissingAssociationAdder;
+use Akeneo\Pim\Enrichment\Component\Product\Association\RemovedTwoWayAssociationCollector;
 use Akeneo\Pim\Enrichment\Component\Product\Exception\TwoWayAssociationWithTheSameProductException;
 use Akeneo\Pim\Enrichment\Component\Product\Model\EntityWithAssociationsInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface;
@@ -16,13 +17,16 @@ class TwoWayAssociationUpdater implements TwoWayAssociationUpdaterInterface
 {
     private ManagerRegistry $registry;
     private MissingAssociationAdder $missingAssociationAdder;
+    private RemovedTwoWayAssociationCollector $removedAssociationCollector;
 
     public function __construct(
         ManagerRegistry $registry,
-        MissingAssociationAdder $missingAssociationAdder
+        MissingAssociationAdder $missingAssociationAdder,
+        RemovedTwoWayAssociationCollector $removedAssociationCollector
     ) {
         $this->registry = $registry;
         $this->missingAssociationAdder = $missingAssociationAdder;
+        $this->removedAssociationCollector = $removedAssociationCollector;
     }
 
     /**
@@ -106,6 +110,8 @@ class TwoWayAssociationUpdater implements TwoWayAssociationUpdaterInterface
 
         $em = $this->registry->getManager();
         $em->persist($associatedEntity);
+
+        $this->removedAssociationCollector->collect($associatedEntity);
     }
 
     private function hasSameProductUuid(ProductInterface $product1, ProductInterface $product2): bool

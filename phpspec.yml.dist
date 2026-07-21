@@ -1,4 +1,8 @@
 ## Rename this file in phpspec.yml to customize the phpspec configuration
+
+php_ini_values:
+    error_reporting: 8191
+
 suites:
     ## Category context
     LegacyCategory:

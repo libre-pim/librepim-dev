@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: Produkte auflisten
       create: Ein Produkt anlegen
+      view_attributes: Attribute eines Produkts anzeigen
       edit_attributes: Die Attribute eines Produktes bearbeiten
       remove: Ein Produkt löschen
       add_attribute: Ein Attribut zu einem Produkt hinzufügen
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: Ein Variantenprodukt in ein einfaches Produkt umwandeln
     product_model:
       create: Produktmodell erstellen
+      view_attributes: Attribute eines Produktmodells anzeigen
       edit_attributes: Attribute eines Produktmodells bearbeiten
       categories_view: Die Kategorien eines Produktmodells anzeigen
       history: Produkthistorie ansehen

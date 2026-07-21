@@ -1,9 +1,50 @@
+# 8.2.0 (2026-07-21)
+
+## Platform / Component Updates
+
+* Added support for **MySQL 8.4 LTS**, while keeping MySQL 8.0 working. MySQL 8.4 returns `GREATEST()` over a nullable datetime as `DATETIME(6)`, which broke date parsing; the search-engine projection queries no longer trigger that promotion, and a dedicated `MySQL84Platform` detects the datetime format from the value itself. Supported range is `>= 8.0.30` and `< 9.0.0`; the Docker image now ships `mysql:8.4.9`
+
+## Features
+
+* Added a **View attributes** ACL for products and product models: a role granted View attributes but not Edit attributes sees the Attributes tab as read-only, with fields disabled and the Save button hidden (#19842)
+
+## Bug fixes
+
+* Fix two-way associated products and models not being reindexed in the search engine when a product is deleted
+* Fix saving a variant product in a two-way associated product model spuriously creating an extra association on the associated entity — `AssociationFieldSetter` and `AssociationFieldAdder` now pre-check merged (own + inherited) associations before calling `createInversedAssociation()`
+* Fix DQI Dashboard category widget showing blank scores for uppercase/mixed-case category codes — `GetAverageRanksQuery::fetchByCodes()` now preserves original-case request code as response key while using lowercase only for internal DB lookup
+* Fix DQI Dashboard family widget showing blank labels for uppercase family codes — `FindFamiliesController` now returns original-case family code; `FamilyWidget` comparison updated to case-insensitive
+* Fix product grid 500 error when a numeric attribute code is used as a column (#20382)
+* Fix 500 error on the create user group page in debug mode (#20401)
+* Fix invalid Doctrine mapping between Product and Group (#18888)
+* Fix version "updated" date not refreshing for overridden Product classes (#18899)
+* Fix the associated product not being reindexed in the search engine when it is removed from a two-way association (#20547)
+* Fix a PHP warning logged when reading the structure version before any structure change has been recorded (#20332)
+* Fix product import emptying the price currencies that are not present in the imported file (#19856)
+* Fix product import emptying a metric amount when only its unit column is imported, and the other way around
+* Fix the forgot-password pages returning a 500 error, so users can request and set a new password again
+
+## CI / Infrastructure
+
+* Added GitHub Actions CI/CD workflows: automated Docker build & publish (`docker.yml`) and pull request checks for PHPSpec, CS-Fixer, and frontend lint/unit tests (`pull_request.yml`)
+* Applied PHPSpec CI improvement: `stderr` output separated from JUnit XML for cleaner CI logs under PHP 8.3 (`phpspec.yml.dist`)
+* Pinned all third-party GitHub Actions in `dsm-test.yml` to immutable SHA refs; replaced two `thollander/actions-comment-pull-request@main` (moving branch) with `@v1` to mitigate supply chain risk (ref: CVE-2025-30066)
+
+## Dependency Upgrades
+
+* Upgraded Docker MySQL image from `8.0.30` to `8.4.9` and removed the deprecated `--default-authentication-plugin=mysql_native_password`
+* Upgraded `lcobucci/jwt` from `^4.2` to `^5.0`; updated `CreateJsonWebTokenSpec` to use `ValidAt` constraint (replaces removed `LooseValidAt`) and consolidated validation constraint registration
+
+## Tests
+
+* Fixed PHPSpec compatibility under PHP 8.3 across multiple spec files (`ClientSpec`, `AttributeOptionValueTypeSpec`, `UrlValidatorSpec`, `GuzzleWebhookClientSpec`, `FamilyShouldBeValidValidatorSpec`, `PropertyProcessShouldBeValidValidatorSpec`, `SimpleOrMultiSelectShouldBeValidValidatorSpec`, `LoginRateLimitListenerSpec`)
+
 # 8.1.0 (2026-06-16)
 
 ## Platform / Component Updates
 
 * Added support for OpenSearch 2.19+
-* Added search engine selection via `SEARCH_ENGINE`
+* Added search engine selection via `SEARCH_ENGINE`; dual compatibility with **OpenSearch 2.19** and **Elasticsearch 8.19** as interchangeable search backends
 * Maintained compatibility with Elasticsearch 8.19
 * Fixed OAuth2 installation issue in Docker environments
 

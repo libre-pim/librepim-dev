@@ -64,7 +64,7 @@ const FamilyWidget: FunctionComponent<FamilyWidgetProps> = ({catalogChannel, cat
 
     const families = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (families) {
-      setWatchedFamilyCodes(JSON.parse(families).map((code: string) => code.toLowerCase()));
+      setWatchedFamilyCodes(JSON.parse(families));
     }
 
     return () => {
@@ -131,7 +131,7 @@ const FamilyWidget: FunctionComponent<FamilyWidgetProps> = ({catalogChannel, cat
           Object.entries(averageScoreByFamilies).map(([familyCode, averageScoreRank]: [string, any], index: number) => {
             let family: Family | undefined = undefined;
             if (Object.keys(families).length > 0) {
-              family = Object.values(families).find((family: any) => family.code === familyCode);
+              family = Object.values(families).find((family: any) => family.code.toLowerCase() === familyCode.toLowerCase());
             }
             return (
               <Row key={index}>

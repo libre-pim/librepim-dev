@@ -17,6 +17,7 @@ use Akeneo\Tool\Component\StorageUtils\Updater\ObjectUpdaterInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Comparator\Filter\FilterInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductModelInterface;
 use Akeneo\Pim\Enrichment\Component\Product\ProductModel\Filter\ProductModelAttributeFilter;
+use Akeneo\Pim\Enrichment\Component\Product\Connector\Processor\Denormalizer\MultiColumnValueMerger;
 use Akeneo\Pim\Enrichment\Component\Product\Connector\Processor\Denormalizer\ProductModelProcessor;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -35,8 +36,11 @@ class ProductModelProcessorSpec extends ObjectBehavior
         ObjectDetacherInterface $objectDetacher,
         ProductModelAttributeFilter $attributeFilter,
         MediaStorer $mediaStorer,
-        CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes
+        CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes,
+        MultiColumnValueMerger $multiColumnValueMerger
     ) {
+        $multiColumnValueMerger->merge(Argument::cetera())->willReturnArgument(1);
+
         $this->beConstructedWith(
             $productModelFactory,
             $productModelUpdater,
@@ -47,6 +51,7 @@ class ProductModelProcessorSpec extends ObjectBehavior
             $attributeFilter,
             $mediaStorer,
             $cleanLineBreaksInTextAttributes,
+            $multiColumnValueMerger,
             'root_product_model'
         );
     }
@@ -409,8 +414,11 @@ class ProductModelProcessorSpec extends ObjectBehavior
         $attributeFilter,
         $mediaStorer,
         CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes,
+        MultiColumnValueMerger $multiColumnValueMerger,
         StepExecution $stepExecution
     ) {
+        $multiColumnValueMerger->merge(Argument::cetera())->willReturnArgument(1);
+
         $this->beConstructedWith(
             $productModelFactory,
             $productModelUpdater,
@@ -421,6 +429,7 @@ class ProductModelProcessorSpec extends ObjectBehavior
             $attributeFilter,
             $mediaStorer,
             $cleanLineBreaksInTextAttributes,
+            $multiColumnValueMerger,
             'root_product_model'
         );
 
@@ -445,8 +454,11 @@ class ProductModelProcessorSpec extends ObjectBehavior
         $attributeFilter,
         $mediaStorer,
         CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes,
+        MultiColumnValueMerger $multiColumnValueMerger,
         StepExecution $stepExecution
     ) {
+        $multiColumnValueMerger->merge(Argument::cetera())->willReturnArgument(1);
+
         $this->beConstructedWith(
             $productModelFactory,
             $productModelUpdater,
@@ -457,6 +469,7 @@ class ProductModelProcessorSpec extends ObjectBehavior
             $attributeFilter,
             $mediaStorer,
             $cleanLineBreaksInTextAttributes,
+            $multiColumnValueMerger,
             'sub_product_model'
         );
 

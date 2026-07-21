@@ -12,6 +12,7 @@ use Prophecy\Argument;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -23,7 +24,7 @@ class PropertyProcessShouldBeValidValidatorSpec extends ObjectBehavior
     public function let(
         ValidatorInterface $globalValidator,
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $this->beConstructedWith($globalValidator);
@@ -45,7 +46,7 @@ class PropertyProcessShouldBeValidValidatorSpec extends ObjectBehavior
 
     public function it_should_not_validate_something_else_than_an_array(
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $context->buildViolation((string)Argument::any())->shouldNotBeCalled();
@@ -56,7 +57,7 @@ class PropertyProcessShouldBeValidValidatorSpec extends ObjectBehavior
 
     public function it_should_not_validate_a_process_without_type(
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $process = [];
@@ -68,24 +69,24 @@ class PropertyProcessShouldBeValidValidatorSpec extends ObjectBehavior
 
     public function it_should_validate_a_type_no_process(
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $process = ['type' => Process::PROCESS_TYPE_NO];
         $context->buildViolation((string)Argument::any())->shouldNotBeCalled();
-        $validator->validate($process, Argument::type(Collection::class))->shouldBeCalledOnce();
+        $validator->validate($process, Argument::type(Collection::class))->willReturn($validator)->shouldBeCalledOnce();
 
         $this->validate($process, new PropertyProcessShouldBeValid());
     }
 
     public function it_should_validate_a_type_truncate_process(
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $process = ['type' => Process::PROCESS_TYPE_TRUNCATE];
         $context->buildViolation((string)Argument::any())->shouldNotBeCalled();
-        $validator->validate($process, Argument::type(Collection::class))->shouldBeCalledOnce();
+        $validator->validate($process, Argument::type(Collection::class))->willReturn($validator)->shouldBeCalledOnce();
 
         $this->validate($process, new PropertyProcessShouldBeValid());
     }

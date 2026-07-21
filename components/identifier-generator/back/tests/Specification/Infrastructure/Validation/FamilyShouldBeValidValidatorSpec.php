@@ -10,6 +10,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -21,7 +22,7 @@ class FamilyShouldBeValidValidatorSpec extends ObjectBehavior
     public function let(
         ValidatorInterface $globalValidator,
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $this->beConstructedWith($globalValidator);
@@ -42,7 +43,7 @@ class FamilyShouldBeValidValidatorSpec extends ObjectBehavior
     }
 
     public function it_should_not_validate_if_condition_is_not_an_array(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $condition = 'foo';
         $validator->validate(Argument::any())->shouldNotBeCalled();
@@ -50,7 +51,7 @@ class FamilyShouldBeValidValidatorSpec extends ObjectBehavior
     }
 
     public function it_should_not_validate_other_conditions(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $condition = ['type' => 'foo'];
 
@@ -59,30 +60,30 @@ class FamilyShouldBeValidValidatorSpec extends ObjectBehavior
     }
 
     public function it_should_only_validate_condition_keys(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $condition = ['type' => 'family', 'foo' => 'bar'];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(1);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(1);
         $this->validate($condition, new FamilyShouldBeValid());
     }
 
     public function it_should_validate_condition_keys_without_value(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $condition = ['type' => 'family', 'operator' => 'EMPTY'];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(2);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(2);
         $this->validate($condition, new FamilyShouldBeValid());
     }
 
     public function it_should_validate_condition_keys_with_value_and_families(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
         ExecutionContext $context,
     ): void {
         $condition = ['type' => 'family', 'operator' => 'IN', 'value' => ['shirts']];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(2);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(2);
         $context->buildViolation(Argument::any())->shouldNotBeCalled();
 
         $this->validate($condition, new FamilyShouldBeValid());

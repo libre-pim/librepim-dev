@@ -89,6 +89,7 @@ pim_enrich:
     product:
       index: Llistar productes
       create: Crear un producte
+      view_attributes: Veure els atributs d'un producte
       edit_attributes: Edita els atributs d'un producte
       remove: Treure un producte
       add_attribute: Afegir un atribut a un producte
@@ -106,6 +107,7 @@ pim_enrich:
       convert_variant_to_simple: Convertir un producte variant en un producte simple
     product_model:
       create: Crear un model de producte
+      view_attributes: Veure els atributs d'un model de producte
       edit_attributes: Editar els atributs d'un model de producte
       categories_view: Consultar les categories d'un model de producte
       history: Veure l'històric del model de producte

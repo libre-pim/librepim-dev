@@ -128,7 +128,7 @@ class ColumnsMergerSpec extends ObjectBehavior
         $fieldExtractor->extractColumnInfo('price-CHF')->willReturn($attributeInfoChf);
         $price->getCode()->willReturn('price');
         $price->getBackendType()->willReturn('prices');
-        $mergedRow = ['price' => '10 EUR,14 CHF'];
+        $mergedRow = ['price' => '10 EUR,USD,14 CHF'];
         $this->merge($row, [])->shouldReturn($mergedRow);
     }
 
@@ -308,7 +308,7 @@ class ColumnsMergerSpec extends ObjectBehavior
         $this->merge($row, [])->shouldReturn($mergedRow);
     }
 
-    public function it_does_not_create_price_when_price_is_empty(
+    public function it_keeps_the_currency_of_an_empty_price_column_so_that_it_can_be_cleared(
         $fieldExtractor,
         AttributeInterface $price
     ) {
@@ -324,7 +324,7 @@ class ColumnsMergerSpec extends ObjectBehavior
         $price->getCode()->willReturn('price');
         $price->getBackendType()->willReturn('prices');
 
-        $this->merge($row, [])->shouldReturn(['price' => '']);
+        $this->merge($row, [])->shouldReturn(['price' => 'EUR']);
     }
 
     public function it_merges_columns_which_represents_price_attribute_value_in_many_columns(

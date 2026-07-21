@@ -39,6 +39,8 @@ class AttributeOptionValueTypeSpec extends ObjectBehavior
 
     function it_sets_default_option(OptionsResolver $resolver)
     {
+        $resolver->setDefaults(['data_class' => AttributeOptionValue::class])->willReturn($resolver);
+
         $this->configureOptions($resolver);
 
         $resolver->setDefaults(

@@ -105,7 +105,7 @@ class UrlValidatorSpec extends ObjectBehavior
         $goodUrl = 'https://www.akeneo.com';
         $constraint = new Url(['attributeCode' => 'a_code']);
 
-        $context->getViolations()->willReturn([]);
+        $context->getViolations()->willReturn(new ConstraintViolationList());
         $context->buildViolation(Argument::cetera())->shouldNotBeCalled();
 
         $this->validate($goodUrl, $constraint);

@@ -177,6 +177,10 @@ class ColumnsMerger
         if (null !== $attributeInfos['price_currency']) {
             $collectedPrices[$cleanField] = $collectedPrices[$cleanField] ?? [];
             if ('' === trim($fieldValue)) {
+                // The currency is collected without an amount, so that an empty column still clears that currency.
+                // Without it, an empty column and a column absent from the file would be indistinguishable.
+                $collectedPrices[$cleanField][] = $attributeInfos['price_currency'];
+
                 return $collectedPrices;
             }
 

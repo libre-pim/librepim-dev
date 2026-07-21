@@ -10,5 +10,4 @@ services:
             - '@database_connection'
 
     pim_catalog.structure.clock:
-        class: 'Lcobucci\Clock\SystemClock'
-        factory: ['Lcobucci\Clock\SystemClock', 'fromUTC']
+        class: 'Symfony\Component\Clock\NativeClock'

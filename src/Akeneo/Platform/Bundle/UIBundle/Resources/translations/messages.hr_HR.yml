@@ -77,6 +77,7 @@ pim_enrich:
     product:
       index: Popis proizvoda
       create: Kreiranje proizvoda
+      view_attributes: Pregled atributa proizvoda
       edit_attributes: Uređivanje atributa proizvoda
       remove: Uklanjanje proizvoda
       add_attribute: Dodavanje atributa proizvoda
@@ -107,6 +108,7 @@ pim_enrich:
       index: Popis obitelji
       create: Kreiraj obitelj
       edit_properties: Uredi svojstva obitelji
+      view_attributes: Pregled atributa modela proizvoda
       edit_attributes: Uredi atribute obitelji
       remove: Ukloni obitelj
       history: Prikaz povijesti obitelji

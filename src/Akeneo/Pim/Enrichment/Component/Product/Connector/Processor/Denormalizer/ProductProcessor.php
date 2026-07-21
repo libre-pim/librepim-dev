@@ -55,7 +55,8 @@ class ProductProcessor extends AbstractProcessor implements ItemProcessorInterfa
         private AttributeFilterInterface $productAttributeFilter,
         private MediaStorer $mediaStorer,
         private RemoveParentInterface $removeParent,
-        private CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes
+        private CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes,
+        private MultiColumnValueMerger $multiColumnValueMerger
     ) {
         $this->repository = $repository;
     }
@@ -94,6 +95,8 @@ class ProductProcessor extends AbstractProcessor implements ItemProcessorInterfa
         } catch (AccessDeniedException $e) {
             throw $this->skipItemAndReturnException($item, $e->getMessage(), $e);
         }
+
+        $filteredItem = $this->multiColumnValueMerger->merge($product, $filteredItem);
 
         if (false === $itemHasStatus && null !== $product->getCreated()) {
             unset($filteredItem['enabled']);

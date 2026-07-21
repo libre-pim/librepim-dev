@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Akeneo\Pim\Enrichment\Component\Product\Updater\Adder;
 
 use Akeneo\Pim\Enrichment\Component\Product\Association\MissingAssociationAdder;
+use Akeneo\Pim\Enrichment\Component\Product\Model\AssociationInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\EntityWithAssociationsInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductModelInterface;
@@ -128,8 +129,16 @@ class AssociationFieldAdder extends AbstractFieldAdder
                     $productIdentifier
                 );
             }
-            $entity->addAssociatedProduct($associatedProduct, $associationType->getCode());
+            $alreadyPresent = false;
             if ($associationType->isTwoWay()) {
+                $mergedAssoc = $entity->getAllAssociations()->filter(
+                    static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
+                )->first();
+                $alreadyPresent = $mergedAssoc && $mergedAssoc->hasProduct($associatedProduct);
+            }
+
+            $entity->addAssociatedProduct($associatedProduct, $associationType->getCode());
+            if ($associationType->isTwoWay() && !$alreadyPresent) {
                 $this->twoWayAssociationUpdater->createInversedAssociation(
                     $entity,
                     $associationType->getCode(),
@@ -159,8 +168,16 @@ class AssociationFieldAdder extends AbstractFieldAdder
                     $productUuid
                 );
             }
-            $entity->addAssociatedProduct($associatedProduct, $associationType->getCode());
+            $alreadyPresent = false;
             if ($associationType->isTwoWay()) {
+                $mergedAssoc = $entity->getAllAssociations()->filter(
+                    static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
+                )->first();
+                $alreadyPresent = $mergedAssoc && $mergedAssoc->hasProduct($associatedProduct);
+            }
+
+            $entity->addAssociatedProduct($associatedProduct, $associationType->getCode());
+            if ($associationType->isTwoWay() && !$alreadyPresent) {
                 $this->twoWayAssociationUpdater->createInversedAssociation(
                     $entity,
                     $associationType->getCode(),
@@ -193,8 +210,16 @@ class AssociationFieldAdder extends AbstractFieldAdder
                     $productModelIdentifier
                 );
             }
-            $entity->addAssociatedProductModel($associatedProductModel, $associationType->getCode());
+            $alreadyPresent = false;
             if ($associationType->isTwoWay()) {
+                $mergedAssoc = $entity->getAllAssociations()->filter(
+                    static fn (AssociationInterface $a): bool => $a->getAssociationType()->getCode() === $associationType->getCode()
+                )->first();
+                $alreadyPresent = $mergedAssoc && $mergedAssoc->getProductModels()->contains($associatedProductModel);
+            }
+
+            $entity->addAssociatedProductModel($associatedProductModel, $associationType->getCode());
+            if ($associationType->isTwoWay() && !$alreadyPresent) {
                 $this->twoWayAssociationUpdater->createInversedAssociation(
                     $entity,
                     $associationType->getCode(),

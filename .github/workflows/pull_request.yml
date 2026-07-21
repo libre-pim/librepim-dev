@@ -1,0 +1,102 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  back-unit:
+    name: Backend Unit (PHPSpec)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, gd, zip, intl, opcache, mysql, bcmath, apcu, exif, imagick
+          coverage: none
+          ini-values: error_reporting=8191
+
+      - name: Cache Composer packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
+
+      - name: Create output directory
+        run: mkdir -p var/tests/phpspec
+
+      - name: Run PHPSpec
+        run: |
+          php vendor/bin/phpspec run --format=junit 2>var/tests/phpspec/stderr.log \
+            > var/tests/phpspec/specs.xml
+          EXIT=$?
+          if [ -s var/tests/phpspec/stderr.log ]; then
+            echo "--- PHPSpec stderr ---"
+            cat var/tests/phpspec/stderr.log
+          fi
+          exit $EXIT
+
+      - name: Upload PHPSpec results
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: phpspec-results
+          path: var/tests/phpspec/
+
+  back-cs:
+    name: Backend Code Style (CS-Fixer)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Cache Composer packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
+
+      - name: Run CS-Fixer (dry-run)
+        run: php vendor/bin/php-cs-fixer fix --diff --dry-run --config=.php_cs.php
+
+  front-checks:
+    name: Frontend Lint + Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '18'
+
+      - name: Cache Yarn packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            node_modules
+            front-packages/*/node_modules
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Unit tests
+        run: yarn unit

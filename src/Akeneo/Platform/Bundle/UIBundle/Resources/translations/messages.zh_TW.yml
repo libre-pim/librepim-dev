@@ -71,6 +71,7 @@ pim_enrich:
     product:
       index: 列表產品
       create: 創建產品
+      view_attributes: 檢視產品的屬性
       edit_attributes: 編輯產品屬性
       remove: 刪除商品
       add_attribute: 添加屬性到一個產品
@@ -86,6 +87,7 @@ pim_enrich:
       history: 查看產品歷史記錄
     product_model:
       create: 創建一個產品型號
+      view_attributes: 檢視產品型號的屬性
       edit_attributes: 編輯產品型號屬性
       categories_view: 咨詢產品型號類別
       history: 查看產品型號歷史記錄

@@ -10,6 +10,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -21,7 +22,7 @@ class SimpleOrMultiSelectShouldBeValidValidatorSpec extends ObjectBehavior
     public function let(
         ValidatorInterface $globalValidator,
         ExecutionContext $context,
-        ValidatorInterface $validator
+        ContextualValidatorInterface $validator
     ): void
     {
         $this->beConstructedWith($globalValidator);
@@ -45,56 +46,56 @@ class SimpleOrMultiSelectShouldBeValidValidatorSpec extends ObjectBehavior
     }
 
     public function it_should_not_validate_if_condition_is_not_an_array(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $validator->validate(Argument::any())->shouldNotBeCalled();
         $this->validate('foo', new SimpleOrMultiSelectShouldBeValid());
     }
 
     public function it_should_not_validate_other_conditions(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $validator->validate(Argument::any())->shouldNotBeCalled();
         $this->validate(['type' => 'foo'], new SimpleOrMultiSelectShouldBeValid());
     }
 
     public function it_should_only_validate_condition_keys_without_operator(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $condition = ['type' => 'simple_select', 'attributeCode' => 'color'];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(1);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(1);
         $this->validate($condition, new SimpleOrMultiSelectShouldBeValid());
     }
 
     public function it_should_validate_condition_keys_without_value(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
     ): void {
         $condition = ['type' => 'simple_select', 'operator' => 'EMPTY', 'attributeCode' => 'color'];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(2);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(2);
         $this->validate($condition, new SimpleOrMultiSelectShouldBeValid());
     }
 
     public function it_should_validate_condition_keys_with_value_and_families(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
         ExecutionContext $context,
     ): void {
         $condition = ['type' => 'simple_select', 'attributeCode' => 'color', 'operator' => 'IN', 'value' => ['green', 'red']];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(2);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(2);
         $context->buildViolation(Argument::any())->shouldNotBeCalled();
 
         $this->validate($condition, new SimpleOrMultiSelectShouldBeValid());
     }
 
     public function it_should_validate_multi_select(
-        ValidatorInterface $validator,
+        ContextualValidatorInterface $validator,
         ExecutionContext $context,
     ): void {
         $condition = ['type' => 'multi_select', 'operator' => 'EMPTY', 'value' => ['option_a', 'option_b']];
 
-        $validator->validate($condition, Argument::any())->shouldBeCalledTimes(2);
+        $validator->validate($condition, Argument::any())->willReturn($validator)->shouldBeCalledTimes(2);
         $context->buildViolation(Argument::any())->shouldNotBeCalled();
 
         $this->validate($condition, new SimpleOrMultiSelectShouldBeValid());

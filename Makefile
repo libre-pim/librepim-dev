@@ -2,12 +2,17 @@
 # This file is a template Makefile. Some targets are presented here as examples.
 # Feel free to customize it to your needs!
 #
-CMD_ON_PROJECT = docker compose run -u www-data:www-data --rm php
+export HOST_UID ?= $(shell id -u)
+export HOST_GID ?= $(shell id -g)
+
+CMD_ON_PROJECT = docker compose run --rm php
+ROOT_CMD_ON_PROJECT = docker compose run --rm --user root php
 PHP_RUN = $(CMD_ON_PROJECT) php
-YARN_RUN = docker compose run -u node --rm -e YARN_REGISTRY -e PUPPETEER_SKIP_CHROMIUM_DOWNLOAD node yarn
+YARN_RUN = docker compose run -u $(HOST_UID):$(HOST_GID) --rm -e YARN_REGISTRY -e PUPPETEER_SKIP_CHROMIUM_DOWNLOAD node yarn
 
 ifdef NO_DOCKER
   CMD_ON_PROJECT =
+  ROOT_CMD_ON_PROJECT =
   YARN_RUN = yarnpkg
   PHP_RUN = php
 endif
@@ -59,7 +64,9 @@ database:
 
 .PHONY: cache
 cache:
-	$(CMD_ON_PROJECT) rm -rf var/cache && $(PHP_RUN) bin/console cache:warmup
+	$(ROOT_CMD_ON_PROJECT) rm -rf var/cache
+	$(PHP_RUN) bin/console cache:warmup
+	chmod -R o+w var/cache
 
 composer.lock: composer.json
 	$(PHP_RUN) -d memory_limit=4G /usr/local/bin/composer update

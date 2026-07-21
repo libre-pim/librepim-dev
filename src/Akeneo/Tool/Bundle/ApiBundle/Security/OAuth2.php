@@ -25,7 +25,8 @@ class OAuth2 extends BaseOAuth2
 {
     public function __construct(IOAuth2Storage $storage, EventDispatcherInterface $eventDispatcher, $config = [])
     {
-        parent::__construct($storage, $config, $eventDispatcher);
+        parent::__construct($storage, $config);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function verifyAccessToken($tokenParam, $scope = null): IOAuth2AccessToken

@@ -5,6 +5,7 @@ namespace Akeneo\Pim\Enrichment\Component\Product\Updater\Setter;
 
 use Akeneo\Pim\Enrichment\Component\Product\Association\MissingAssociationAdder;
 use Akeneo\Pim\Enrichment\Component\Product\Exception\InvalidAssociationProductIdentifierException;
+use Akeneo\Pim\Enrichment\Component\Product\Model\AssociationInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\EntityWithAssociationsInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductModelInterface;
@@ -161,9 +162,21 @@ class AssociationFieldSetter extends AbstractFieldSetter
         ProductInterface $associatedProduct,
         AssociationTypeInterface $associationType
     ): void {
+        // For two-way associations, check merged associations (own + inherited) BEFORE the add.
+        // AbstractProduct::addAssociatedProduct silently no-ops when the product is already
+        // in merged associations, but createInversedAssociation must also be skipped in that
+        // case to avoid spuriously adding the variant to the associated entity's association.
+        $alreadyInMergedAssociations = false;
+        if ($associationType->isTwoWay()) {
+            $mergedAssociation = $owner->getAllAssociations()->filter(
+                static fn (AssociationInterface $assoc): bool => $assoc->getAssociationType()->getCode() === $associationType->getCode()
+            )->first();
+            $alreadyInMergedAssociations = $mergedAssociation && $mergedAssociation->hasProduct($associatedProduct);
+        }
+
         $owner->addAssociatedProduct($associatedProduct, $associationType->getCode());
 
-        if ($associationType->isTwoWay()) {
+        if ($associationType->isTwoWay() && !$alreadyInMergedAssociations) {
             $this->twoWayAssociationUpdater->createInversedAssociation(
                 $owner,
                 $associationType->getCode(),
@@ -225,9 +238,21 @@ class AssociationFieldSetter extends AbstractFieldSetter
         ProductModelInterface $associatedProductModel,
         AssociationTypeInterface $associationType
     ): void {
+        // For two-way associations, check merged associations (own + inherited) BEFORE the add.
+        // AbstractProduct::addAssociatedProductModel silently no-ops when the model is already
+        // in merged associations, but createInversedAssociation must also be skipped in that
+        // case to avoid spuriously adding the variant to the associated product model's association.
+        $alreadyInMergedAssociations = false;
+        if ($associationType->isTwoWay()) {
+            $mergedAssociation = $owner->getAllAssociations()->filter(
+                static fn (AssociationInterface $assoc): bool => $assoc->getAssociationType()->getCode() === $associationType->getCode()
+            )->first();
+            $alreadyInMergedAssociations = $mergedAssociation && $mergedAssociation->getProductModels()->contains($associatedProductModel);
+        }
+
         $owner->addAssociatedProductModel($associatedProductModel, $associationType->getCode());
 
-        if ($associationType->isTwoWay()) {
+        if ($associationType->isTwoWay() && !$alreadyInMergedAssociations) {
             $this->twoWayAssociationUpdater->createInversedAssociation(
                 $owner,
                 $associationType->getCode(),

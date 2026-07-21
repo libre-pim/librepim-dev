@@ -71,6 +71,7 @@ pim_enrich:
     product:
       index: Listahan ng mga produkto
       create: Gumawa ng produkto
+      view_attributes: Tingnan ang mga attribute ng isang produkto
       edit_attributes: I-edit ang mga katangian ng produkto
       remove: Itanggal ang produkto
       add_attribute: Mag dagdag ng katangian sa produkto
@@ -86,6 +87,7 @@ pim_enrich:
       history: Tingnan ang kasaysayan ng produkto
     product_model:
       create: Lumikha ng isang modelo ng produkto
+      view_attributes: Tingnan ang mga attribute ng isang modelo ng produkto
       edit_attributes: Baguhin ang mga katangian ng isang modelo ng produkto
       categories_view: Konsultahin ang mga kategoryang model ng produkto
       history: Tingnan ang kasaysayan ng produkto
