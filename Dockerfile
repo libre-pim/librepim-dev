@@ -2,7 +2,7 @@ FROM httpd:2.4-bullseye AS base
 
 LABEL maintainer="LibrePIM Contributors" \
       description="LibrePIM - Long-Term Support Fork of Akeneo PIM Community Edition" \
-      version="8.1.0" \
+      version="8.2.0" \
       repository="https://github.com/libre-pim/librepim-dev"
 
 ENV PHP_VERSION=8.3 \

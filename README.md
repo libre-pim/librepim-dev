@@ -127,6 +127,26 @@ These values are used by the `php` service in `docker-compose.yml` so that files
 
 ---
 
+## 🗄️ Database (MySQL)
+
+LibrePIM supports **MySQL 8.0.30 and later, up to (but not including) 9.0**,
+which covers both the 8.0 series and **MySQL 8.4 LTS**. The Docker setup ships
+`mysql:8.4.9`.
+
+Running on 8.4 needs no configuration change. Doctrine is configured with
+`server_version: '8.4'` and a dedicated `MySQL84Platform`, which detects the
+datetime format from the returned value, so `DATETIME` and `DATETIME(6)`
+columns are both parsed correctly on either server version.
+
+> **Note for custom queries:** MySQL 8.4 changed `GREATEST()` so that mixing a
+> `DATETIME` column with a non-datetime fallback — for example
+> `GREATEST(a.updated, COALESCE(b.updated, 0))` — promotes the result to
+> `DATETIME(6)` and yields values with microseconds. Code that parses those
+> values with a fixed `'Y-m-d H:i:s'` format then fails. Use a datetime column
+> as the fallback instead: `GREATEST(a.updated, COALESCE(b.updated, a.updated))`.
+
+---
+
 ## 🔍 Search Engine (Elasticsearch or OpenSearch)
 
 LibrePIM runs on **Elasticsearch 8** by default and also supports

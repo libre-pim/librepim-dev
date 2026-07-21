@@ -1,4 +1,8 @@
-# Unreleased
+# 8.2.0 (2026-07-21)
+
+## Platform / Component Updates
+
+* Added support for **MySQL 8.4 LTS**, while keeping MySQL 8.0 working. MySQL 8.4 returns `GREATEST()` over a nullable datetime as `DATETIME(6)`, which broke date parsing; the search-engine projection queries no longer trigger that promotion, and a dedicated `MySQL84Platform` detects the datetime format from the value itself. Supported range is `>= 8.0.30` and `< 9.0.0`; the Docker image now ships `mysql:8.4.9`
 
 ## Features
 
@@ -18,6 +22,7 @@
 * Fix a PHP warning logged when reading the structure version before any structure change has been recorded (#20332)
 * Fix product import emptying the price currencies that are not present in the imported file (#19856)
 * Fix product import emptying a metric amount when only its unit column is imported, and the other way around
+* Fix the forgot-password pages returning a 500 error, so users can request and set a new password again
 
 ## CI / Infrastructure
 
@@ -27,7 +32,7 @@
 
 ## Dependency Upgrades
 
-* Upgraded Docker MySQL image from `8.0.30` to `8.0.34` LTS and removed deprecated `--default-authentication-plugin=mysql_native_password`
+* Upgraded Docker MySQL image from `8.0.30` to `8.4.9` and removed the deprecated `--default-authentication-plugin=mysql_native_password`
 * Upgraded `lcobucci/jwt` from `^4.2` to `^5.0`; updated `CreateJsonWebTokenSpec` to use `ValidAt` constraint (replaces removed `LooseValidAt`) and consolidated validation constraint registration
 
 ## Tests
