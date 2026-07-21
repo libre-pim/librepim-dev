@@ -16,6 +16,8 @@
 * Fix version "updated" date not refreshing for overridden Product classes (#18899)
 * Fix the associated product not being reindexed in the search engine when it is removed from a two-way association (#20547)
 * Fix a PHP warning logged when reading the structure version before any structure change has been recorded (#20332)
+* Fix product import emptying the price currencies that are not present in the imported file (#19856)
+* Fix product import emptying a metric amount when only its unit column is imported, and the other way around
 
 ## CI / Infrastructure
 

@@ -6,6 +6,7 @@ use Akeneo\Pim\Enrichment\Component\Product\Comparator\Filter\FilterInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Connector\Processor\CleanLineBreaksInTextAttributes;
 use Akeneo\Pim\Enrichment\Component\Product\Connector\Processor\Denormalizer\FindProductToImport;
 use Akeneo\Pim\Enrichment\Component\Product\Connector\Processor\Denormalizer\MediaStorer;
+use Akeneo\Pim\Enrichment\Component\Product\Connector\Processor\Denormalizer\MultiColumnValueMerger;
 use Akeneo\Pim\Enrichment\Component\Product\EntityWithFamilyVariant\AddParent;
 use Akeneo\Pim\Enrichment\Component\Product\EntityWithFamilyVariant\RemoveParentInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\Product;
@@ -43,8 +44,11 @@ class ProductProcessorSpec extends ObjectBehavior
         AttributeFilterInterface $productAttributeFilter,
         MediaStorer $mediaStorer,
         RemoveParentInterface $removeParent,
-        CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes
+        CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes,
+        MultiColumnValueMerger $multiColumnValueMerger
     ) {
+        $multiColumnValueMerger->merge(Argument::cetera())->willReturnArgument(1);
+
         $this->beConstructedWith(
             $productRepository,
             $productToImport,
@@ -56,7 +60,8 @@ class ProductProcessorSpec extends ObjectBehavior
             $productAttributeFilter,
             $mediaStorer,
             $removeParent,
-            $cleanLineBreaksInTextAttributes
+            $cleanLineBreaksInTextAttributes,
+            $multiColumnValueMerger
         );
         $this->setStepExecution($stepExecution);
     }

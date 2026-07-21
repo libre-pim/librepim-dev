@@ -69,6 +69,8 @@ class ProductModelProcessor extends AbstractProcessor implements ItemProcessorIn
 
     private CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes;
 
+    private MultiColumnValueMerger $multiColumnValueMerger;
+
     /** @var Warning[] */
     private array $nonBlockingWarnings = [];
 
@@ -82,6 +84,7 @@ class ProductModelProcessor extends AbstractProcessor implements ItemProcessorIn
         AttributeFilterInterface $productModelAttributeFilter,
         MediaStorer $mediaStorer,
         CleanLineBreaksInTextAttributes $cleanLineBreaksInTextAttributes,
+        MultiColumnValueMerger $multiColumnValueMerger,
         string $importType
     ) {
         parent::__construct($productModelRepository);
@@ -96,6 +99,7 @@ class ProductModelProcessor extends AbstractProcessor implements ItemProcessorIn
         $this->importType = $importType;
         $this->mediaStorer = $mediaStorer;
         $this->cleanLineBreaksInTextAttributes = $cleanLineBreaksInTextAttributes;
+        $this->multiColumnValueMerger = $multiColumnValueMerger;
     }
 
     /**
@@ -121,6 +125,8 @@ class ProductModelProcessor extends AbstractProcessor implements ItemProcessorIn
         $standardProductModel = $this->filterItemData($standardProductModel);
 
         $productModel = $this->findOrCreateProductModel($standardProductModel['code']);
+
+        $standardProductModel = $this->multiColumnValueMerger->merge($productModel, $standardProductModel);
 
         $jobParameters = $this->stepExecution->getJobParameters();
         if ($jobParameters->get('enabledComparison') && null !== $productModel->getId()) {
