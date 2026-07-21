@@ -43,7 +43,7 @@ SQL;
             ['resource_names' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
         );
 
-        $loggedAt = $stmt->fetchAssociative()['last_update'];
+        $loggedAt = $stmt->fetchAssociative()['last_update'] ?? null;
 
         if (null === $loggedAt) {
             return 0;
