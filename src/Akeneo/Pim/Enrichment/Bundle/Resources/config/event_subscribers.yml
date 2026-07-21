@@ -194,6 +194,7 @@ services:
             - '@doctrine'
             - '@pim_catalog.elasticsearch.indexer.product'
             - '@pim_catalog.elasticsearch.indexer.product_model'
+            - '@pim_catalog.association.removed_two_way_association_collector'
         tags:
             - { name: kernel.event_subscriber }
 

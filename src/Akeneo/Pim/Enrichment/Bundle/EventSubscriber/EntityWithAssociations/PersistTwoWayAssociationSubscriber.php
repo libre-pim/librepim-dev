@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\Pim\Enrichment\Bundle\EventSubscriber\EntityWithAssociations;
 
+use Akeneo\Pim\Enrichment\Component\Product\Association\RemovedTwoWayAssociationCollector;
 use Akeneo\Pim\Enrichment\Component\Product\Model\AssociationInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\EntityWithAssociationsInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Storage\Indexer\ProductIndexerInterface;
@@ -24,7 +25,8 @@ final class PersistTwoWayAssociationSubscriber implements EventSubscriberInterfa
     public function __construct(
         private ManagerRegistry $registry,
         private ProductIndexerInterface $productIndexer,
-        private ProductModelIndexerInterface $productModelIndexer
+        private ProductModelIndexerInterface $productModelIndexer,
+        private RemovedTwoWayAssociationCollector $removedAssociationCollector
     ) {
     }
 
@@ -106,11 +108,18 @@ final class PersistTwoWayAssociationSubscriber implements EventSubscriberInterfa
 
     public function indexAssociatedEntities(): void
     {
-        $this->productIndexer->indexFromProductUuids($this->productUuidsToIndex);
-        $this->productModelIndexer->indexFromProductModelCodes($this->productModelCodesToIndex);
+        // Entities removed from a two-way association are no longer part of the associations of the saved entity,
+        // so they are collected at removal time instead of being read from the associations here.
+        $this->productIndexer->indexFromProductUuids(
+            \array_merge($this->productUuidsToIndex, $this->removedAssociationCollector->getProductUuids())
+        );
+        $this->productModelIndexer->indexFromProductModelCodes(
+            \array_merge($this->productModelCodesToIndex, $this->removedAssociationCollector->getProductModelCodes())
+        );
 
         $this->productUuidsToIndex = [];
         $this->productModelCodesToIndex = [];
+        $this->removedAssociationCollector->reset();
     }
 
     public function indexAssociatedEntitiesOnRemove(): void
