@@ -167,23 +167,34 @@ class Client
             $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $length);
         } catch (ClientResponseException $e) {
             if (400 === $e->getResponse()->getStatusCode()) {
-                $chunkLength = intdiv($length, self::NUMBER_OF_BATCHES_ON_RETRY);
-                $chunkLength = $chunkLength % 2 == 0 ? $chunkLength : $chunkLength + 1;
-
-                $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $chunkLength);
+                $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $this->retryChunkLength($length));
             } else {
                 throw $e;
             }
         } catch (BadRequest400Exception $e) {
-            $chunkLength = intdiv($length, self::NUMBER_OF_BATCHES_ON_RETRY);
-            $chunkLength = $chunkLength % 2 == 0 ? $chunkLength : $chunkLength + 1;
-
-            $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $chunkLength);
+            $mergedResponse = $this->doChunkedBulkIndex($params, $mergedResponse, $this->retryChunkLength($length));
         } catch (\Exception $e) {
             throw new IndexationException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $mergedResponse;
+    }
+
+    /**
+     * Length of the chunks used when a bulk request is retried in smaller pieces.
+     *
+     * The bulk body is a list of action + document pairs, so the length is kept even, and never below a single
+     * pair: array_chunk() rejects a length of zero.
+     */
+    private function retryChunkLength(int $length): int
+    {
+        $chunkLength = intdiv($length, self::NUMBER_OF_BATCHES_ON_RETRY);
+
+        if (0 !== $chunkLength % 2) {
+            ++$chunkLength;
+        }
+
+        return max(2, $chunkLength);
     }
 
     private function doChunkedBulkIndex(array $params, array $mergedResponse, int $chunkLength): array
