@@ -8,25 +8,27 @@ use Akeneo\UserManagement\Bundle\Notification\MailResetNotifier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Twig\Environment;
 
 class ResetController extends AbstractController
 {
     public function __construct(
         private readonly UserManager $userManager,
-        private readonly SessionInterface $session,
+        private readonly RequestStack $requestStack,
         private readonly ResetHandler $resetHandler,
         private readonly TokenStorageInterface $tokenStorage,
         private readonly FormInterface $form,
         private readonly MailResetNotifier $mailer,
+        private readonly Environment $twig,
     ) {
     }
 
     public function request(): Response
     {
-        return $this->render('@PimUser/Reset/request.html.twig');
+        return new Response($this->twig->render('@PimUser/Reset/request.html.twig'));
     }
 
     /**
@@ -38,7 +40,7 @@ class ResetController extends AbstractController
         $user = $this->userManager->findUserByUsernameOrEmail($username);
 
         if (null === $user || false === $user->isEnabled()) {
-            return $this->render('@PimUser/Reset/sendEmail.html.twig');
+            return new Response($this->twig->render('@PimUser/Reset/sendEmail.html.twig'));
         }
 
         if ($user->isPasswordRequestNonExpired($this->container->getParameter('pim_user.reset.ttl'))) {
@@ -59,7 +61,7 @@ class ResetController extends AbstractController
 
         $this->mailer->notify($user);
 
-        return $this->render('@PimUser/Reset/sendEmail.html.twig');
+        return new Response($this->twig->render('@PimUser/Reset/sendEmail.html.twig'));
     }
 
     /**
@@ -88,15 +90,15 @@ class ResetController extends AbstractController
             $this->addFlash('success', 'Your password has been successfully reset. You may login now.');
 
             // force user logout
-            $this->session->invalidate();
+            $this->requestStack->getSession()->invalidate();
             $this->tokenStorage->setToken(null);
 
             return $this->redirectToRoute('pim_user_security_login');
         }
 
-        return $this->render('@PimUser/Reset/reset.html.twig', [
+        return new Response($this->twig->render('@PimUser/Reset/reset.html.twig', [
             'token' => $token,
             'form' => $this->form->createView(),
-        ]);
+        ]));
     }
 }
