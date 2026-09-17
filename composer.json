@@ -85,7 +85,7 @@
         "doctrine/migrations": "^3.5.0",
         "doctrine/orm": "^2.20",
         "doctrine/persistence": "^3.4",
-        "dompdf/dompdf": "2.0.8",
+        "dompdf/dompdf": "3.1.6",
         "elasticsearch/elasticsearch": "^8.19.0",
         "friendsofsymfony/jsrouting-bundle": "^3.2.1",
         "friendsofsymfony/rest-bundle": "^3.4.0",
